@@ -17,7 +17,8 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		$validator = new FluidValidator();
 
-		$this->assertTrue( $validator->getBoolResult() );
+		$this->assertTrue( $validator->passed() );
+		$this->assertFalse( $validator->failed() );
 		$this->assertEmpty( $validator->getMessages() );
 		$this->assertInternalType( 'array', $validator->getMessages() );
 	}
@@ -26,16 +27,18 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		$validator = new FluidValidator();
 
-		$this->assertFalse( $validator->isString( null, 'TestMessage' )->getBoolResult() );
+		$this->assertFalse( $validator->isString( null, 'TestMessage' )->passed() );
 		$this->assertEquals( [ 'TestMessage' ], $validator->getMessages() );
 
-		$this->assertFalse( $validator->getBoolResult() );
+		$this->assertFalse( $validator->passed() );
+		$this->assertTrue( $validator->failed() );
 		$this->assertNotEmpty( $validator->getMessages() );
 		$this->assertInternalType( 'array', $validator->getMessages() );
 
 		$validator->reset();
 
-		$this->assertTrue( $validator->getBoolResult() );
+		$this->assertTrue( $validator->passed() );
+		$this->assertFalse( $validator->failed() );
 		$this->assertEmpty( $validator->getMessages() );
 		$this->assertInternalType( 'array', $validator->getMessages() );
 	}
@@ -44,25 +47,26 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		$validator = new FluidValidator();
 
-		$this->assertFalse( $validator->isString( null, 'TestMessage' )->getBoolResult() );
+		$this->assertFalse( $validator->isString( null, 'TestMessage' )->passed() );
 		$this->assertEquals( [ 'TestMessage' ], $validator->getMessages() );
 
 		$validator->reset();
 
-		$this->assertTrue( $validator->isStringOrNull( null, 'TestMessage' )->getBoolResult() );
+		$this->assertTrue( $validator->isStringOrNull( null, 'TestMessage' )->passed() );
+		$this->assertFalse( $validator->isStringOrNull( null, 'TestMessage' )->failed() );
 		$this->assertEquals( [ ], $validator->getMessages() );
 	}
 
 	/**
-	 * @param string $unknown_method
+	 * @param string $unknownMethod
 	 *
 	 * @dataProvider unknownMethodProvider
 	 * @expectedException \hollodotme\FluidValidator\Exceptions\CheckMethodNotCallable
 	 */
-	public function testCallingUnknownMethodFails( $unknown_method )
+	public function testCallingUnknownMethodFails( $unknownMethod )
 	{
 		$validator = new FluidValidator();
-		$validator->{$unknown_method}( null, 'TestMessage' );
+		$validator->{$unknownMethod}( null, 'TestMessage' );
 	}
 
 	public function unknownMethodProvider()
@@ -83,35 +87,44 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		          ->isString( null, 'Second fail' )
 		          ->isString( 'Yes', 'Succeeds' );
 
-		$this->assertFalse( $validator->getBoolResult() );
+		$this->assertFalse( $validator->passed() );
+		$this->assertTrue( $validator->failed() );
 		$this->assertEquals( [ 'First fail' ], $validator->getMessages() );
 	}
 
 	public function testRecordingMessagesContinuesAfterFirstFailedValidationInCheckAllMode()
 	{
-		$validator = new FluidValidator( CheckMode::ALL );
+		$validator = new FluidValidator( CheckMode::CONTINUOUS );
 		$validator->isString( 'Yes', 'Succeeds' )
 		          ->isString( null, 'First fail' )
 		          ->isString( null, 'Second fail' )
 		          ->isString( 'Yes', 'Succeeds' )
 		          ->isString( null, 'Third fail' );
 
-		$this->assertFalse( $validator->getBoolResult() );
+		$this->assertFalse( $validator->passed() );
+		$this->assertTrue( $validator->failed() );
 		$this->assertEquals( [ 'First fail', 'Second fail', 'Third fail' ], $validator->getMessages() );
 	}
 
 	/**
 	 * @dataProvider isNonEmptyStringProvider
+	 *
+	 * @param mixed  $value
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsNonEmptyString( $value, $expected_bool, $expected_message )
+	public function testIsNonEmptyString( $value, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isNonEmptyString( $value, 'String is empty' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isNonEmptyStringProvider()
 	{
 		return [
@@ -141,16 +154,23 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isNotEmptyProvider
+	 *
+	 * @param mixed  $value
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsNotEmpty( $value, $expected_bool, $expected_message )
+	public function testIsNotEmpty( $value, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isNotEmpty( $value, 'Is empty' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isNotEmptyProvider()
 	{
 		return [
@@ -170,16 +190,23 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isArrayProvider
+	 *
+	 * @param mixed  $value
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsArray( $value, $expected_bool, $expected_message )
+	public function testIsArray( $value, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isArray( $value, 'Not an array' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isArrayProvider()
 	{
 		return [
@@ -198,16 +225,23 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isIntProvider
+	 *
+	 * @param mixed  $value
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsInt( $value, $expected_bool, $expected_message )
+	public function testIsInt( $value, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isInt( $value, 'Not an int' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isIntProvider()
 	{
 		return [
@@ -233,16 +267,24 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isIntInRangeProvider
+	 *
+	 * @param mixed  $value
+	 * @param array  $list
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsIntInRange( $value, array $list, $expected_bool, $expected_message )
+	public function testIsIntInRange( $value, array $list, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isIntInRange( $value, $list, 'Not in range' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isIntInRangeProvider()
 	{
 		return [
@@ -267,16 +309,24 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isOneStringOfProvider
+	 *
+	 * @param mixed  $value
+	 * @param array  $list
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsOneStringOf( $value, array $list, $expected_bool, $expected_message )
+	public function testIsOneStringOf( $value, array $list, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isOneStringOf( $value, $list, 'Not a string of' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isOneStringOfProvider()
 	{
 		return [
@@ -298,16 +348,24 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isSubsetOfProvider
+	 *
+	 * @param mixed  $values
+	 * @param array  $list
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsSubsetOf( $values, array $list, $expected_bool, $expected_message )
+	public function testIsSubsetOf( $values, array $list, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isSubsetOf( $values, $list, 'Not a subset' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isSubsetOfProvider()
 	{
 		return [
@@ -331,16 +389,23 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @dataProvider isUuidProvider
+	 *
+	 * @param mixed  $value
+	 * @param bool   $expectedBool
+	 * @param string $expectedMessage
 	 */
-	public function testIsUuid( $value, $expected_bool, $expected_message )
+	public function testIsUuid( $value, $expectedBool, $expectedMessage )
 	{
 		$validator = new FluidValidator();
 		$validator->isUuid( $value, 'Not a uuid' );
 
-		$this->assertSame( $expected_bool, $validator->getBoolResult() );
-		$this->assertEquals( $expected_message, $validator->getMessages() );
+		$this->assertSame( $expectedBool, $validator->passed() );
+		$this->assertEquals( $expectedMessage, $validator->getMessages() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isUuidProvider()
 	{
 		return [
@@ -376,9 +441,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$validator = new FluidValidator();
 		$validator->isDate( $dateString, $format, 'Not a valid date string' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function isDateProvider()
 	{
 		return [
@@ -410,9 +478,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$validator = new FluidValidator();
 		$validator->isEqual( $value1, $value2, "Values are not equal." );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function equalValuesProvider()
 	{
 		return [
@@ -440,9 +511,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$validator = new FluidValidator();
 		$validator->isNotEqual( $value1, $value2, "Values are not equal." );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function notEqualValuesProvider()
 	{
 		return [
@@ -470,9 +544,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$validator = new FluidValidator();
 		$validator->isSame( $value1, $value2, "Values are not the same." );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function sameValuesProvider()
 	{
 		$stringObject = new ValueObjects\ObjectWithToStringMethod( 'Test' );
@@ -511,9 +588,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$validator = new FluidValidator();
 		$validator->isNotSame( $value1, $value2, "Values are not the same." );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function notSameValuesProvider()
 	{
 		$stringObject = new ValueObjects\ObjectWithToStringMethod( 'Test' );
@@ -546,7 +626,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->isNull( null, 'Value is not null' );
 
-		$this->assertTrue( $validator->getBoolResult() );
+		$this->assertTrue( $validator->passed() );
 	}
 
 	public function testCanCheckValueIsNotNull()
@@ -555,7 +635,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->isNotNull( false, 'Value is null' );
 
-		$this->assertTrue( $validator->getBoolResult() );
+		$this->assertTrue( $validator->passed() );
 	}
 
 	/**
@@ -571,9 +651,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->matchesRegex( $value, $regex, 'Value does not match regex.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function regexMatchProvider()
 	{
 		return [
@@ -601,9 +684,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->hasLength( $value, $length, 'Value has not correct length.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function lengthProvider()
 	{
 		return [
@@ -633,9 +719,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->hasMinLength( $value, $minLength, 'Value has not min length.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function minLengthProvider()
 	{
 		return [
@@ -669,9 +758,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->hasMaxLength( $value, $maxLength, 'Value has not max length.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function maxLengthProvider()
 	{
 		return [
@@ -706,9 +798,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->counts( $value, $count, 'Count is not correct.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function arrayCountProvider()
 	{
 		return [
@@ -736,9 +831,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->isEmail( $value, 'Not an email address.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function emailProvider()
 	{
 		return [
@@ -795,9 +893,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->isUrl( $value, 'Is not an url.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function urlProvider()
 	{
 		return [
@@ -831,9 +932,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->isJson( $value, 'Is not json.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function jsonProvider()
 	{
 		return [
@@ -868,9 +972,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 
 		$validator->hasKey( $value, $key, 'Has not key.' );
 
-		$this->assertSame( $expectedResult, $validator->getBoolResult() );
+		$this->assertSame( $expectedResult, $validator->passed() );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function keyProvider()
 	{
 		return [
@@ -924,11 +1031,14 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		             ->with( $params[0] )
 		             ->willReturn( $params[0] );
 
-		$validator = new FluidValidator( CheckMode::ALL, $dataProvider );
+		$validator = new FluidValidator( CheckMode::CONTINUOUS, $dataProvider );
 
 		call_user_func_array( [ $validator, $method ], $params );
 	}
 
+	/**
+	 * @return array
+	 */
 	public function methodAndParamsProvider()
 	{
 		return [

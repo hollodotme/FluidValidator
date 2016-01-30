@@ -11,7 +11,7 @@ namespace hollodotme\FluidValidator;
  */
 abstract class CheckMode
 {
-	const ALL                = 1;
+	const CONTINUOUS         = 1;
 
 	const STOP_ON_FIRST_FAIL = 2;
 }

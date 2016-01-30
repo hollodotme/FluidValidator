@@ -61,41 +61,54 @@ use hollodotme\FluidValidator\Validators\StringValidator;
  */
 class FluidValidator
 {
-	/** @var bool */
-	protected $boolResult;
-
-	/** @var array */
-	protected $messages;
-
 	/** @var int */
 	private $mode;
 
 	/** @var ProvidesValuesToValidate|null */
 	private $dataProvider;
 
+	/** @var bool */
+	protected $passed;
+
+	/** @var array */
+	protected $messages;
+
 	/**
 	 * @param int                           $mode
 	 * @param ProvidesValuesToValidate|null $dataProvider
 	 */
-	public function __construct( $mode = CheckMode::ALL, ProvidesValuesToValidate $dataProvider = null )
+	public function __construct( $mode = CheckMode::CONTINUOUS, ProvidesValuesToValidate $dataProvider = null )
 	{
 		$this->mode         = $mode;
 		$this->dataProvider = $dataProvider;
 		$this->reset();
 	}
 
+	/**
+	 * @return $this
+	 */
 	public function reset()
 	{
-		$this->boolResult = true;
-		$this->messages   = [ ];
+		$this->passed   = true;
+		$this->messages = [ ];
+
+		return $this;
 	}
 
 	/**
-	 * @return boolean
+	 * @return bool
 	 */
-	public function getBoolResult()
+	public function passed()
 	{
-		return $this->boolResult;
+		return $this->passed;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function failed()
+	{
+		return !$this->passed;
 	}
 
 	/**
@@ -120,7 +133,7 @@ class FluidValidator
 		$checkMethod = 'check' . ucfirst( preg_replace( "#OrNull$#", '', $name ) );
 		$this->guardCheckMethodIsCallable( $checkMethod );
 
-		if ( $this->mode == CheckMode::STOP_ON_FIRST_FAIL && !$this->boolResult )
+		if ( $this->mode == CheckMode::STOP_ON_FIRST_FAIL && !$this->passed )
 		{
 			return $this;
 		}
@@ -138,7 +151,7 @@ class FluidValidator
 
 				if ( !$checkResult )
 				{
-					$this->boolResult = false;
+					$this->passed     = false;
 					$this->messages[] = $message;
 				}
 			}
