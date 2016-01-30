@@ -395,7 +395,7 @@ class FluidValidator
 		{
 			$val = strval( $this->getValue( $value ) );
 
-			return (mb_strlen( $val ) == $length);
+			return (mb_strlen( $val, '8bit' ) == $length);
 		}
 		else
 		{
@@ -415,7 +415,7 @@ class FluidValidator
 		{
 			$val = strval( $this->getValue( $value ) );
 
-			return (mb_strlen( $val ) >= $minLength);
+			return (mb_strlen( $val, '8bit' ) >= $minLength);
 		}
 		else
 		{
@@ -435,7 +435,7 @@ class FluidValidator
 		{
 			$val = strval( $this->getValue( $value ) );
 
-			return (mb_strlen( $val ) <= $maxLength);
+			return (mb_strlen( $val, '8bit' ) <= $maxLength);
 		}
 		else
 		{
