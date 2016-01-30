@@ -1,0 +1,16 @@
+.idea
+
+# vagrant
+.vagrant/
+vagrant
+
+# composer
+vendor/
+
+# tools
+build/tools/*.phar
+
+# locally generated docs
+build/api/
+build/phpdox/
+build/logs/
