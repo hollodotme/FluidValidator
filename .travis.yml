@@ -7,7 +7,7 @@ php:
 branches:
   only:
     - master
-    - development
+    - dev
     - /^feature\/.+$/
 
 before_script:
