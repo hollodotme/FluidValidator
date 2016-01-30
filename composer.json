@@ -1,30 +1,33 @@
 {
-  "name": "hollodotme/fluid-validator",
-  "description": "Validating values with a fluid interfaced class",
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Holger Woltersdorf",
-      "email": "hw@hollo.me"
-    }
-  ],
-  "support": {
-    "email": "hw@hollo.me",
-    "source": "https://github.com/hollodotme/fluid-validator"
-  },
-  "require": {
-    "php": ">=5.5"
-  },
-  "autoload": {
-    "psr-4": {
-      "hollodotme\\FluidValidator\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "hollodotme\\FluidValidator\\Tests\\Unit\\": "tests/Unit/"
-    }
-  }
+	"name": "hollodotme/fluid-validator",
+	"description": "Validating values with a fluid interfaced class",
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Holger Woltersdorf",
+			"email": "hw@hollo.me"
+		}
+	],
+	"support": {
+		"email": "hw@hollo.me",
+		"source": "https://github.com/hollodotme/fluid-validator"
+	},
+	"require": {
+		"php": ">=5.5"
+	},
+	"require-dev": {
+		"satooshi/php-coveralls": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"hollodotme\\FluidValidator\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"hollodotme\\FluidValidator\\Tests\\Unit\\": "tests/Unit/"
+		}
+	}
 }
