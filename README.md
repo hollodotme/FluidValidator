@@ -1,3 +1,10 @@
+[![Build Status](https://travis-ci.org/hollodotme/FluidValidator.svg?branch=master)](https://travis-ci.org/hollodotme/FluidValidator)
+[![Coverage Status](https://coveralls.io/repos/hollodotme/FluidValidator/badge.svg?branch=master&service=github)](https://coveralls.io/github/hollodotme/FluidValidator?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/hollodotme/fluid-validator/v/stable)](https://packagist.org/packages/hollodotme/fluid-validator) 
+[![Total Downloads](https://poser.pugx.org/hollodotme/fluid-validator/downloads)](https://packagist.org/packages/hollodotme/fluid-validator) 
+[![Latest Unstable Version](https://poser.pugx.org/hollodotme/fluid-validator/v/unstable)](https://packagist.org/packages/hollodotme/fluid-validator) 
+[![License](https://poser.pugx.org/hollodotme/fluid-validator/license)](https://packagist.org/packages/hollodotme/fluid-validator)
+
 # FluidValidator
 
 Validating values with a fluid interfaced class
@@ -71,7 +78,7 @@ public function getMessages() : array
 
 ```php
 # Processes all validations regardless of failed ones
-CheckMode:CONTINUOUS
+CheckMode::CONTINUOUS
 
 # Processes all validations until the first one failed
 CheckMode::STOP_ON_FIRST_FAIL
