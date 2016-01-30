@@ -9,12 +9,12 @@ namespace hollodotme\FluidValidator\Interfaces;
  * Interface ProvidesDataForValidation
  * @package hollodotme\FluidValidator\Interfaces
  */
-interface ProvidesDataForValidation
+interface ProvidesValuesToValidate
 {
 	/**
 	 * @param mixed $var
 	 *
 	 * @return mixed
 	 */
-	public function getData( $var );
+	public function getValueToValidate( $var );
 }

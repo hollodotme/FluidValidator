@@ -8,7 +8,7 @@ namespace hollodotme\FluidValidator\Tests\Unit\Validators;
 use hollodotme\FluidValidator\CheckMode;
 use hollodotme\FluidValidator\Exceptions\CheckMethodNotCallable;
 use hollodotme\FluidValidator\FluidValidator;
-use hollodotme\FluidValidator\Interfaces\ProvidesDataForValidation;
+use hollodotme\FluidValidator\Interfaces\ProvidesValuesToValidate;
 use hollodotme\FluidValidator\Tests\Unit\Fixtures\ValueObjects;
 
 class FluidValidatorTest extends \PHPUnit_Framework_TestCase
@@ -915,12 +915,12 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCanDelegateDataRetrievalToDataProvider( $method, array $params )
 	{
-		$dataProvider = $this->getMockBuilder( ProvidesDataForValidation::class )
-		                     ->setMethods( [ 'getData' ] )
+		$dataProvider = $this->getMockBuilder( ProvidesValuesToValidate::class )
+		                     ->setMethods( [ 'getValueToValidate' ] )
 		                     ->getMock();
 
 		$dataProvider->expects( $this->atLeast( 1 ) )
-		             ->method( 'getData' )
+		             ->method( 'getValueToValidate' )
 		             ->with( $params[0] )
 		             ->willReturn( $params[0] );
 

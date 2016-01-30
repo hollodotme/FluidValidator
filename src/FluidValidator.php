@@ -6,7 +6,7 @@
 namespace hollodotme\FluidValidator;
 
 use hollodotme\FluidValidator\Exceptions\CheckMethodNotCallable;
-use hollodotme\FluidValidator\Interfaces\ProvidesDataForValidation;
+use hollodotme\FluidValidator\Interfaces\ProvidesValuesToValidate;
 use hollodotme\FluidValidator\Validators\StringValidator;
 
 /**
@@ -70,14 +70,14 @@ class FluidValidator
 	/** @var int */
 	private $mode;
 
-	/** @var ProvidesDataForValidation|null */
+	/** @var ProvidesValuesToValidate|null */
 	private $dataProvider;
 
 	/**
-	 * @param int                            $mode
-	 * @param ProvidesDataForValidation|null $dataProvider
+	 * @param int                           $mode
+	 * @param ProvidesValuesToValidate|null $dataProvider
 	 */
-	public function __construct( $mode = CheckMode::ALL, ProvidesDataForValidation $dataProvider = null )
+	public function __construct( $mode = CheckMode::ALL, ProvidesValuesToValidate $dataProvider = null )
 	{
 		$this->mode         = $mode;
 		$this->dataProvider = $dataProvider;
@@ -169,9 +169,9 @@ class FluidValidator
 	 */
 	protected function getValue( $var )
 	{
-		if ( $this->dataProvider instanceof ProvidesDataForValidation )
+		if ( $this->dataProvider instanceof ProvidesValuesToValidate )
 		{
-			return $this->dataProvider->getData( $var );
+			return $this->dataProvider->getValueToValidate( $var );
 		}
 		else
 		{
