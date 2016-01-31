@@ -439,6 +439,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 	public function testIsDate( $dateString, $format, $expectedResult )
 	{
 		$validator = new FluidValidator();
+
 		$validator->isDate( $dateString, $format, 'Not a valid date string' );
 
 		$this->assertSame( $expectedResult, $validator->passed() );
@@ -463,6 +464,64 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ '2015-01-01', 'Y-m-d', true ],
 			[ '16.03.1984', 'd.m.Y', true ],
 			[ '1970-01-01 23:59:59', 'Y-m-d H:i:s', true ],
+		];
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param bool  $expectedResult
+	 *
+	 * @dataProvider isTrueDataProvider
+	 */
+	public function testIsTrue( $value, $expectedResult )
+	{
+		$validator = new FluidValidator();
+
+		$validator->isTrue( $value, 'Not TRUE' );
+
+		$this->assertSame( $expectedResult, $validator->passed() );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function isTrueDataProvider()
+	{
+		return [
+			[ true, true ],
+			[ false, false ],
+			[ null, false ],
+			[ 'TRUE', false ],
+			[ 1, false ],
+		];
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param bool  $expectedResult
+	 *
+	 * @dataProvider isFalseDataProvider
+	 */
+	public function testIsFalse( $value, $expectedResult )
+	{
+		$validator = new FluidValidator();
+
+		$validator->isFalse( $value, 'Not FALSE' );
+
+		$this->assertSame( $expectedResult, $validator->passed() );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function isFalseDataProvider()
+	{
+		return [
+			[ false, true ],
+			[ true, false ],
+			[ null, false ],
+			[ 'FALSE', false ],
+			[ 0, false ],
 		];
 	}
 
@@ -1086,6 +1145,10 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ 'hasKeyOrNull', [ [ 'unit' => 'test' ], 'unit', '' ] ],
 			[ 'isDate', [ '1970-01-01', 'Y-m-d', '' ] ],
 			[ 'isDateOrNull', [ '1970-01-01', 'Y-m-d', '' ] ],
+			[ 'isTrue', [ true, '' ] ],
+			[ 'isTrueOrNull', [ true, '' ] ],
+			[ 'isFalse', [ false, '' ] ],
+			[ 'isFalseOrNull', [ false, '' ] ],
 		];
 	}
 
@@ -1103,5 +1166,217 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		{
 			$this->assertEquals( 'checkSomeNotExistingMethod', $e->getMethodName() );
 		}
+	}
+
+	public function testWhenExcutesFollowingChecksIfConditionIsTrue()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Empty string 2',
+			'Empty string 3',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( true, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testWhenSkipsFollowingChecksIfConditionIsFalse()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( false, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testDirectChainedWhenMethods1()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Empty string 3',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( true, 2 )
+		          ->when( false, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testDirectChainedWhenMethods2()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( false, 2 )
+		          ->when( true, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testDirectChainedWhenMethods3()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( false, 2 )
+		          ->when( false, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testDirectChainedWhenMethods4()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Empty string 2.1',
+			'Empty string 2.2',
+			'Empty string 3',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( true, 2 )
+		          ->when( true, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testIndirectChainedWhenMethods1()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Empty string 2',
+			'Empty string 3',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( true, 3 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->when( false, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testIndirectChainedWhenMethods2()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( false, 3 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->when( true, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testIndirectChainedWhenMethods3()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( false, 3 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->when( false, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testIndirectChainedWhenMethods4()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Empty string 2',
+			'Empty string 2.1',
+			'Empty string 2.2',
+			'Empty string 3',
+			'Not an array',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->when( true, 3 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->when( true, 2 )
+		          ->isNonEmptyString( '', 'Empty string 2.1' )
+		          ->isNonEmptyString( '', 'Empty string 2.2' )
+		          ->isNonEmptyString( '', 'Empty string 3' )
+		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 }

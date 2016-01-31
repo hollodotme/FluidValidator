@@ -57,6 +57,58 @@ use hollodotme\FluidValidator\Validators\StringValidator;
  * @method FluidValidator hasKeyOrNull($values, $key, $message)
  * @method FluidValidator isDate($dateString, $format = 'Y-m-d', $message)
  * @method FluidValidator isDateOrNull($dateString, $format = 'Y-m-d', $message)
+ * @method FluidValidator isTrue($value, $message)
+ * @method FluidValidator isTrueOrNull($value, $message)
+ * @method FluidValidator isFalse($value, $message)
+ * @method FluidValidator isFalseOrNull($value, $message)
+ * @method FluidValidator whenIsString($value, $continue = 1)
+ * @method FluidValidator whenIsStringOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsNonEmptyString($value, $continue = 1)
+ * @method FluidValidator whenIsNonEmptyStringOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsNotEmpty($value, $continue = 1)
+ * @method FluidValidator whenIsNotEmptyOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsArray($value, $continue = 1)
+ * @method FluidValidator whenIsArrayOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsInt($value, $continue = 1)
+ * @method FluidValidator whenIsIntOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsIntInRange($value, array $range, $continue = 1)
+ * @method FluidValidator whenIsIntInRangeOrNull($value, array $range, $continue = 1)
+ * @method FluidValidator whenIsOneStringOf($value, array $list, $continue = 1)
+ * @method FluidValidator whenIsOneStringOfOrNull($value, array $list, $continue = 1)
+ * @method FluidValidator whenIsSubsetOf($values, array $list, $continue = 1)
+ * @method FluidValidator whenIsSubsetOfOrNull($values, array $list, $continue = 1)
+ * @method FluidValidator whenIsUuid($value, $continue = 1)
+ * @method FluidValidator whenIsUuidOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsEqual($value1, $value2, $continue = 1)
+ * @method FluidValidator whenIsNotEqual($value1, $value2, $continue = 1)
+ * @method FluidValidator whenIsSame($value1, $value2, $continue = 1)
+ * @method FluidValidator whenIsNotSame($value1, $value2, $continue = 1)
+ * @method FluidValidator whenIsNull($value, $continue = 1)
+ * @method FluidValidator whenIsNotNull($value, $continue = 1)
+ * @method FluidValidator whenMatchesRegex($value, $regex, $continue = 1)
+ * @method FluidValidator whenMatchesRegexOrNull($value, $regex, $continue = 1)
+ * @method FluidValidator whenHasLength($value, $length, $continue = 1)
+ * @method FluidValidator whenHasLengthOrNull($value, $length, $continue = 1)
+ * @method FluidValidator whenHasMinLength($value, $minLength, $continue = 1)
+ * @method FluidValidator whenHasMinLengthOrNull($value, $minLength, $continue = 1)
+ * @method FluidValidator whenHasMaxLength($value, $maxLength, $continue = 1)
+ * @method FluidValidator whenHasMaxLengthOrNull($value, $maxLength, $continue = 1)
+ * @method FluidValidator whenCounts($values, $count, $continue = 1)
+ * @method FluidValidator whenCountsOrNull($values, $count, $continue = 1)
+ * @method FluidValidator whenIsEmail($value, $continue = 1)
+ * @method FluidValidator whenIsEmailOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsUrl($value, $continue = 1)
+ * @method FluidValidator whenIsUrlNull($value, $continue = 1)
+ * @method FluidValidator whenIsJson($value, $continue = 1)
+ * @method FluidValidator whenIsJsonOrNull($value, $continue = 1)
+ * @method FluidValidator whenHasKey($values, $key, $continue = 1)
+ * @method FluidValidator whenHasKeyOrNull($values, $key, $continue = 1)
+ * @method FluidValidator whenIsDate($dateString, $format = 'Y-m-d', $continue = 1)
+ * @method FluidValidator whenIsDateOrNull($dateString, $format = 'Y-m-d', $continue = 1)
+ * @method FluidValidator whenIsTrue($value, $continue = 1)
+ * @method FluidValidator whenIsTrueOrNull($value, $continue = 1)
+ * @method FluidValidator whenIsFalse($value, $continue = 1)
+ * @method FluidValidator whenIsFalseOrNull($value, $continue = 1)
  * METHODEND
  */
 class FluidValidator
@@ -66,6 +118,9 @@ class FluidValidator
 
 	/** @var ProvidesValuesToValidate|null */
 	private $dataProvider;
+
+	/** @var int */
+	private $skipCounter;
 
 	/** @var bool */
 	protected $passed;
@@ -89,8 +144,32 @@ class FluidValidator
 	 */
 	public function reset()
 	{
-		$this->passed   = true;
-		$this->messages = [ ];
+		$this->skipCounter = 0;
+		$this->passed      = true;
+		$this->messages    = [ ];
+
+		return $this;
+	}
+
+	/**
+	 * @param bool $expression
+	 * @param int  $continue
+	 *
+	 * @return $this
+	 */
+	public function when( $expression, $continue = 1 )
+	{
+		if ( $this->skipCounter > 0 )
+		{
+			$this->skipCounter += intval( $continue ) - 1;
+		}
+		else
+		{
+			if ( !$expression )
+			{
+				$this->skipCounter = intval( $continue );
+			}
+		}
 
 		return $this;
 	}
@@ -128,18 +207,80 @@ class FluidValidator
 	 */
 	public function __call( $name, array $arguments )
 	{
-		$orNull = (substr( $name, -6 ) == 'OrNull');
+		if ( substr( $name, 0, 4 ) == 'when' )
+		{
+			$methodName = substr( $name, 4 );
 
-		$checkMethod = 'check' . ucfirst( preg_replace( "#OrNull$#", '', $name ) );
+			return $this->handleWhenMethods( $methodName, $arguments );
+		}
+		else
+		{
+			return $this->handleCheckMethods( $name, $arguments );
+		}
+	}
+
+	/**
+	 * @param string $methodName
+	 * @param array  $arguments
+	 *
+	 * @throws CheckMethodNotCallable
+	 * @return FluidValidator
+	 */
+	private function handleWhenMethods( $methodName, array $arguments )
+	{
+		$checkMethod = 'check' . ucfirst( preg_replace( "#OrNull$#", '', $methodName ) );
 		$this->guardCheckMethodIsCallable( $checkMethod );
 
-		if ( $this->mode == CheckMode::STOP_ON_FIRST_FAIL && !$this->passed )
+		$continue    = array_pop( $arguments );
+		$checkResult = call_user_func_array( [ $this, $checkMethod ], $arguments );
+
+		if ( $this->checkNullCondition( $methodName, $arguments[0] ) )
+		{
+			$checkResult = true;
+		}
+
+		return $this->when( $checkResult, $continue );
+	}
+
+	/**
+	 * @param string $methodName
+	 * @param mixed  $var
+	 *
+	 * @return bool
+	 */
+	private function checkNullCondition( $methodName, $var )
+	{
+		$value    = $this->getValue( $var );
+		$optional = (substr( $methodName, -6 ) == 'OrNull');
+
+		return ($optional && is_null( $value ));
+	}
+
+	/**
+	 * @param string $methodName
+	 * @param array  $arguments
+	 *
+	 * @throws CheckMethodNotCallable
+	 * @return $this
+	 */
+	private function handleCheckMethods( $methodName, array $arguments )
+	{
+		$checkMethod = 'check' . ucfirst( preg_replace( "#OrNull$#", '', $methodName ) );
+		$this->guardCheckMethodIsCallable( $checkMethod );
+
+		if ( $this->skipCounter > 0 )
+		{
+			$this->skipCounter--;
+
+			return $this;
+		}
+		elseif ( $this->mode == CheckMode::STOP_ON_FIRST_FAIL && !$this->passed )
 		{
 			return $this;
 		}
 		else
 		{
-			if ( $orNull && is_null( $this->getValue( $arguments[0] ) ) )
+			if ( $this->checkNullCondition( $methodName, $arguments[0] ) )
 			{
 				return $this;
 			}
@@ -180,7 +321,7 @@ class FluidValidator
 	 *
 	 * @return mixed
 	 */
-	protected function getValue( $var )
+	public function getValue( $var )
 	{
 		if ( $this->dataProvider instanceof ProvidesValuesToValidate )
 		{
@@ -534,5 +675,25 @@ class FluidValidator
 		$dateTime  = \DateTime::createFromFormat( $format, $dateValue );
 
 		return ($dateTime && ($dateTime->format( $format ) == $dateValue));
+	}
+
+	/**
+	 * @param mixed $var
+	 *
+	 * @return bool
+	 */
+	protected function checkIsTrue( $var )
+	{
+		return $this->getValue( $var ) === true;
+	}
+
+	/**
+	 * @param mixed $var
+	 *
+	 * @return bool
+	 */
+	protected function checkIsFalse( $var )
+	{
+		return $this->getValue( $var ) === false;
 	}
 }

@@ -62,6 +62,64 @@ public function hasKey( $values, $key, $message ) : FluidValidator;
 public function hasKeyOrNull( $values, $key, $message ) : FluidValidator;
 public function isDate( $dateString, $format = 'Y-m-d', $message ) : FluidValidator;
 public function isDateOrNull( $dateString, $format = 'Y-m-d', $message ) : FluidValidator;
+public function isTrue( $value, $message ) : FluidValidator;
+public function isTrueOrNull( $value, $message ) : FluidValidator;
+public function isFalse( $value, $message ) : FluidValidator;
+public function isFalseOrNull( $value, $message ) : FluidValidator;
+```
+
+## Conditional methods
+
+```php
+public function when( $expression, $continue = 1 ) : FluidValidator;
+public function whenIsString( $value, $continue = 1 ) : FluidValidator;
+public function whenIsStringOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsNonEmptyString( $value, $continue = 1 ) : FluidValidator;
+public function whenIsNonEmptyStringOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsNotEmpty( $value, $continue = 1 ) : FluidValidator;
+public function whenIsNotEmptyOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsArray( $value, $continue = 1 ) : FluidValidator;
+public function whenIsArrayOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsInt( $value, $continue = 1 ) : FluidValidator;
+public function whenIsIntOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsIntInRange( $value, array $range, $continue = 1 ) : FluidValidator;
+public function whenIsIntInRangeOrNull( $value, array $range, $continue = 1 ) : FluidValidator;
+public function whenIsOneStringOf( $value, array $list, $continue = 1 ) : FluidValidator;
+public function whenIsOneStringOfOrNull( $value, array $list, $continue = 1 ) : FluidValidator;
+public function whenIsSubsetOf( $values, array $list, $continue = 1 ) : FluidValidator;
+public function whenIsSubsetOfOrNull( $values, array $list, $continue = 1 ) : FluidValidator;
+public function whenIsUuid( $value, $continue = 1 ) : FluidValidator;
+public function whenIsUuidOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsEqual( $value1, $value2, $continue = 1 ) : FluidValidator;
+public function whenIsNotEqual( $value1, $value2, $continue = 1 ) : FluidValidator;
+public function whenIsSame( $value1, $value2, $continue = 1 ) : FluidValidator;
+public function whenIsNotSame( $value1, $value2, $continue = 1 ) : FluidValidator;
+public function whenIsNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsNotNull( $value, $continue = 1 ) : FluidValidator;
+public function whenMatchesRegex( $value, $regex, $continue = 1 ) : FluidValidator;
+public function whenMatchesRegexOrNull( $value, $regex, $continue = 1 ) : FluidValidator;
+public function whenHasLength( $value, $length, $continue = 1 ) : FluidValidator;
+public function whenHasLengthOrNull( $value, $length, $continue = 1 ) : FluidValidator;
+public function whenHasMinLength( $value, $minLength, $continue = 1 ) : FluidValidator;
+public function whenHasMinLengthOrNull( $value, $minLength, $continue = 1 ) : FluidValidator;
+public function whenHasMaxLength( $value, $maxLength, $continue = 1 ) : FluidValidator;
+public function whenHasMaxLengthOrNull( $value, $maxLength, $continue = 1 ) : FluidValidator;
+public function whenCounts( $values, $count, $continue = 1 ) : FluidValidator;
+public function whenCountsOrNull( $values, $count, $continue = 1 ) : FluidValidator;
+public function whenIsEmail( $value, $continue = 1 ) : FluidValidator;
+public function whenIsEmailOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsUrl( $value, $continue = 1 ) : FluidValidator;
+public function whenIsUrlNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsJson( $value, $continue = 1 ) : FluidValidator;
+public function whenIsJsonOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenHasKey( $values, $key, $continue = 1 ) : FluidValidator;
+public function whenHasKeyOrNull( $values, $key, $continue = 1 ) : FluidValidator;
+public function whenIsDate( $dateString, $format = 'Y-m-d', $continue = 1 ) : FluidValidator;
+public function whenIsDateOrNull( $dateString, $format = 'Y-m-d', $continue = 1 ) : FluidValidator;
+public function whenIsTrue( $value, $continue = 1 ) : FluidValidator;
+public function whenIsTrueOrNull( $value, $continue = 1 ) : FluidValidator;
+public function whenIsFalse( $value, $continue = 1 ) : FluidValidator;
+public function whenIsFalseOrNull( $value, $continue = 1 ) : FluidValidator;
 ```
 
 ## Non-validation methods
@@ -74,10 +132,13 @@ public function reset() : FluidValidator;
 public function passed() : bool;
 
 # Returns TRUE, if one or more validations have failed, otherwise FALSE
-public function failed() : bool
+public function failed() : bool;
+
+# Returns the the value for $var from data provider, or $var if no data provider is set.
+public function getValue( $var ) : mixed;
 
 # Returns an array of messages collected from failed validations
-public function getMessages() : array
+public function getMessages() : array;
 ```
 
 ## Available validation modes
