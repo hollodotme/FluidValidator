@@ -1,6 +1,6 @@
 {
 	"name": "hollodotme/fluid-validator",
-	"description": "Validating values with a fluid interfaced class",
+	"description": "Validating values with a fluent interfaced class",
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"license": "MIT",

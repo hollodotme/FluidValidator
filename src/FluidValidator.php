@@ -61,54 +61,54 @@ use hollodotme\FluidValidator\Validators\StringValidator;
  * @method FluidValidator isTrueOrNull($value, $message)
  * @method FluidValidator isFalse($value, $message)
  * @method FluidValidator isFalseOrNull($value, $message)
- * @method FluidValidator whenIsString($value, $continue = 1)
- * @method FluidValidator whenIsStringOrNull($value, $continue = 1)
- * @method FluidValidator whenIsNonEmptyString($value, $continue = 1)
- * @method FluidValidator whenIsNonEmptyStringOrNull($value, $continue = 1)
- * @method FluidValidator whenIsNotEmpty($value, $continue = 1)
- * @method FluidValidator whenIsNotEmptyOrNull($value, $continue = 1)
- * @method FluidValidator whenIsArray($value, $continue = 1)
- * @method FluidValidator whenIsArrayOrNull($value, $continue = 1)
- * @method FluidValidator whenIsInt($value, $continue = 1)
- * @method FluidValidator whenIsIntOrNull($value, $continue = 1)
- * @method FluidValidator whenIsIntInRange($value, array $range, $continue = 1)
- * @method FluidValidator whenIsIntInRangeOrNull($value, array $range, $continue = 1)
- * @method FluidValidator whenIsOneStringOf($value, array $list, $continue = 1)
- * @method FluidValidator whenIsOneStringOfOrNull($value, array $list, $continue = 1)
- * @method FluidValidator whenIsSubsetOf($values, array $list, $continue = 1)
- * @method FluidValidator whenIsSubsetOfOrNull($values, array $list, $continue = 1)
- * @method FluidValidator whenIsUuid($value, $continue = 1)
- * @method FluidValidator whenIsUuidOrNull($value, $continue = 1)
- * @method FluidValidator whenIsEqual($value1, $value2, $continue = 1)
- * @method FluidValidator whenIsNotEqual($value1, $value2, $continue = 1)
- * @method FluidValidator whenIsSame($value1, $value2, $continue = 1)
- * @method FluidValidator whenIsNotSame($value1, $value2, $continue = 1)
- * @method FluidValidator whenIsNull($value, $continue = 1)
- * @method FluidValidator whenIsNotNull($value, $continue = 1)
- * @method FluidValidator whenMatchesRegex($value, $regex, $continue = 1)
- * @method FluidValidator whenMatchesRegexOrNull($value, $regex, $continue = 1)
- * @method FluidValidator whenHasLength($value, $length, $continue = 1)
- * @method FluidValidator whenHasLengthOrNull($value, $length, $continue = 1)
- * @method FluidValidator whenHasMinLength($value, $minLength, $continue = 1)
- * @method FluidValidator whenHasMinLengthOrNull($value, $minLength, $continue = 1)
- * @method FluidValidator whenHasMaxLength($value, $maxLength, $continue = 1)
- * @method FluidValidator whenHasMaxLengthOrNull($value, $maxLength, $continue = 1)
- * @method FluidValidator whenCounts($values, $count, $continue = 1)
- * @method FluidValidator whenCountsOrNull($values, $count, $continue = 1)
- * @method FluidValidator whenIsEmail($value, $continue = 1)
- * @method FluidValidator whenIsEmailOrNull($value, $continue = 1)
- * @method FluidValidator whenIsUrl($value, $continue = 1)
- * @method FluidValidator whenIsUrlNull($value, $continue = 1)
- * @method FluidValidator whenIsJson($value, $continue = 1)
- * @method FluidValidator whenIsJsonOrNull($value, $continue = 1)
- * @method FluidValidator whenHasKey($values, $key, $continue = 1)
- * @method FluidValidator whenHasKeyOrNull($values, $key, $continue = 1)
- * @method FluidValidator whenIsDate($dateString, $format = 'Y-m-d', $continue = 1)
- * @method FluidValidator whenIsDateOrNull($dateString, $format = 'Y-m-d', $continue = 1)
- * @method FluidValidator whenIsTrue($value, $continue = 1)
- * @method FluidValidator whenIsTrueOrNull($value, $continue = 1)
- * @method FluidValidator whenIsFalse($value, $continue = 1)
- * @method FluidValidator whenIsFalseOrNull($value, $continue = 1)
+ * @method FluidValidator ifIsString($value, $continue)
+ * @method FluidValidator ifIsStringOrNull($value, $continue)
+ * @method FluidValidator ifIsNonEmptyString($value, $continue)
+ * @method FluidValidator ifIsNonEmptyStringOrNull($value, $continue)
+ * @method FluidValidator ifIsNotEmpty($value, $continue)
+ * @method FluidValidator ifIsNotEmptyOrNull($value, $continue)
+ * @method FluidValidator ifIsArray($value, $continue)
+ * @method FluidValidator ifIsArrayOrNull($value, $continue)
+ * @method FluidValidator ifIsInt($value, $continue)
+ * @method FluidValidator ifIsIntOrNull($value, $continue)
+ * @method FluidValidator ifIsIntInRange($value, array $range, $continue)
+ * @method FluidValidator ifIsIntInRangeOrNull($value, array $range, $continue)
+ * @method FluidValidator ifIsOneStringOf($value, array $list, $continue)
+ * @method FluidValidator ifIsOneStringOfOrNull($value, array $list, $continue)
+ * @method FluidValidator ifIsSubsetOf($values, array $list, $continue)
+ * @method FluidValidator ifIsSubsetOfOrNull($values, array $list, $continue)
+ * @method FluidValidator ifIsUuid($value, $continue)
+ * @method FluidValidator ifIsUuidOrNull($value, $continue)
+ * @method FluidValidator ifIsEqual($value1, $value2, $continue)
+ * @method FluidValidator ifIsNotEqual($value1, $value2, $continue)
+ * @method FluidValidator ifIsSame($value1, $value2, $continue)
+ * @method FluidValidator ifIsNotSame($value1, $value2, $continue)
+ * @method FluidValidator ifIsNull($value, $continue)
+ * @method FluidValidator ifIsNotNull($value, $continue)
+ * @method FluidValidator ifMatchesRegex($value, $regex, $continue)
+ * @method FluidValidator ifMatchesRegexOrNull($value, $regex, $continue)
+ * @method FluidValidator ifHasLength($value, $length, $continue)
+ * @method FluidValidator ifHasLengthOrNull($value, $length, $continue)
+ * @method FluidValidator ifHasMinLength($value, $minLength, $continue)
+ * @method FluidValidator ifHasMinLengthOrNull($value, $minLength, $continue)
+ * @method FluidValidator ifHasMaxLength($value, $maxLength, $continue)
+ * @method FluidValidator ifHasMaxLengthOrNull($value, $maxLength, $continue)
+ * @method FluidValidator ifCounts($values, $count, $continue)
+ * @method FluidValidator ifCountsOrNull($values, $count, $continue)
+ * @method FluidValidator ifIsEmail($value, $continue)
+ * @method FluidValidator ifIsEmailOrNull($value, $continue)
+ * @method FluidValidator ifIsUrl($value, $continue)
+ * @method FluidValidator ifIsUrlNull($value, $continue)
+ * @method FluidValidator ifIsJson($value, $continue)
+ * @method FluidValidator ifIsJsonOrNull($value, $continue)
+ * @method FluidValidator ifHasKey($values, $key, $continue)
+ * @method FluidValidator ifHasKeyOrNull($values, $key, $continue)
+ * @method FluidValidator ifIsDate($dateString, $format = 'Y-m-d', $continue)
+ * @method FluidValidator ifIsDateOrNull($dateString, $format = 'Y-m-d', $continue)
+ * @method FluidValidator ifIsTrue($value, $continue)
+ * @method FluidValidator ifIsTrueOrNull($value, $continue)
+ * @method FluidValidator ifIsFalse($value, $continue)
+ * @method FluidValidator ifIsFalseOrNull($value, $continue)
  * METHODEND
  */
 class FluidValidator
@@ -157,7 +157,7 @@ class FluidValidator
 	 *
 	 * @return $this
 	 */
-	public function when( $expression, $continue = 1 )
+	public function checkIf( $expression, $continue )
 	{
 		if ( $this->skipCounter > 0 )
 		{
@@ -207,11 +207,11 @@ class FluidValidator
 	 */
 	public function __call( $name, array $arguments )
 	{
-		if ( substr( $name, 0, 4 ) == 'when' )
+		if ( substr( $name, 0, 2 ) == 'if' )
 		{
-			$methodName = substr( $name, 4 );
+			$methodName = substr( $name, 2 );
 
-			return $this->handleWhenMethods( $methodName, $arguments );
+			return $this->handleIfMethods( $methodName, $arguments );
 		}
 		else
 		{
@@ -226,20 +226,21 @@ class FluidValidator
 	 * @throws CheckMethodNotCallable
 	 * @return FluidValidator
 	 */
-	private function handleWhenMethods( $methodName, array $arguments )
+	private function handleIfMethods( $methodName, array $arguments )
 	{
 		$checkMethod = 'check' . ucfirst( preg_replace( "#OrNull$#", '', $methodName ) );
 		$this->guardCheckMethodIsCallable( $checkMethod );
 
-		$continue    = array_pop( $arguments );
-		$checkResult = call_user_func_array( [ $this, $checkMethod ], $arguments );
+		$continue       = array_pop( $arguments );
+		$checkArguments = $arguments + [ '' ];
+		$checkResult    = call_user_func_array( [ $this, $checkMethod ], $checkArguments );
 
 		if ( $this->checkNullCondition( $methodName, $arguments[0] ) )
 		{
 			$checkResult = true;
 		}
 
-		return $this->when( $checkResult, $continue );
+		return $this->checkIf( $checkResult, $continue );
 	}
 
 	/**

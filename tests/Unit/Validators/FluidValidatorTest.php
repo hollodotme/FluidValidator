@@ -1168,7 +1168,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		}
 	}
 
-	public function testWhenExcutesFollowingChecksIfConditionIsTrue()
+	public function testCheckIfExcutesFollowingChecksIfConditionIsTrue()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1179,7 +1179,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( true, 2 )
+		          ->checkIf( true, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
 		          ->isArray( false, 'Not an array' );
@@ -1188,7 +1188,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testWhenSkipsFollowingChecksIfConditionIsFalse()
+	public function testCheckIfSkipsFollowingChecksIfConditionIsFalse()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1197,7 +1197,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( false, 2 )
+		          ->checkIf( false, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
 		          ->isArray( false, 'Not an array' );
@@ -1206,7 +1206,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testDirectChainedWhenMethods1()
+	public function testDirectChainedCheckIfMethods1()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1216,8 +1216,8 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( true, 2 )
-		          ->when( false, 2 )
+		          ->checkIf( true, 2 )
+		          ->checkIf( false, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1227,7 +1227,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testDirectChainedWhenMethods2()
+	public function testDirectChainedCheckIfMethods2()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1236,8 +1236,8 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( false, 2 )
-		          ->when( true, 2 )
+		          ->checkIf( false, 2 )
+		          ->checkIf( true, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1247,7 +1247,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testDirectChainedWhenMethods3()
+	public function testDirectChainedCheckIfMethods3()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1256,8 +1256,8 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( false, 2 )
-		          ->when( false, 2 )
+		          ->checkIf( false, 2 )
+		          ->checkIf( false, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1267,7 +1267,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testDirectChainedWhenMethods4()
+	public function testDirectChainedCheckIfMethods4()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1279,8 +1279,8 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( true, 2 )
-		          ->when( true, 2 )
+		          ->checkIf( true, 2 )
+		          ->checkIf( true, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1290,7 +1290,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testIndirectChainedWhenMethods1()
+	public function testIndirectChainedCheckIfMethods1()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1301,9 +1301,9 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( true, 3 )
+		          ->checkIf( true, 3 )
 		          ->isNonEmptyString( '', 'Empty string 2' )
-		          ->when( false, 2 )
+		          ->checkIf( false, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1313,7 +1313,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testIndirectChainedWhenMethods2()
+	public function testIndirectChainedCheckIfMethods2()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1322,9 +1322,9 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( false, 3 )
+		          ->checkIf( false, 3 )
 		          ->isNonEmptyString( '', 'Empty string 2' )
-		          ->when( true, 2 )
+		          ->checkIf( true, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1334,7 +1334,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testIndirectChainedWhenMethods3()
+	public function testIndirectChainedCheckIfMethods3()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1343,9 +1343,9 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( false, 3 )
+		          ->checkIf( false, 3 )
 		          ->isNonEmptyString( '', 'Empty string 2' )
-		          ->when( false, 2 )
+		          ->checkIf( false, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
@@ -1355,7 +1355,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
-	public function testIndirectChainedWhenMethods4()
+	public function testIndirectChainedCheckIfMethods4()
 	{
 		$validator        = new FluidValidator();
 		$expectedMessages = [
@@ -1368,13 +1368,54 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		];
 
 		$validator->isNonEmptyString( '', 'Empty string 1' )
-		          ->when( true, 3 )
+		          ->checkIf( true, 3 )
 		          ->isNonEmptyString( '', 'Empty string 2' )
-		          ->when( true, 2 )
+		          ->checkIf( true, 2 )
 		          ->isNonEmptyString( '', 'Empty string 2.1' )
 		          ->isNonEmptyString( '', 'Empty string 2.2' )
 		          ->isNonEmptyString( '', 'Empty string 3' )
 		          ->isArray( false, 'Not an array' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testIfMethods()
+	{
+		$validator = new FluidValidator();
+
+		$expectedMessages = [
+			'Empty string 2',
+			'Is not one string of 1',
+			'Is not one string of 2',
+			'Not an array 1',
+			'Is not equal 1',
+			'Is not same 1',
+			'Invalid date 1',
+			'Not an URL 1',
+			'Empty string 4',
+			'Too long 1',
+		];
+
+		$validator->isNonEmptyString( 'unit-test', 'Empty string 1' )
+		          ->ifIsNonEmptyString( 'unit-test', 1 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->ifCounts( [ 1, 2 ], 2, 2 )
+		          ->isOneStringOf( '3', [ '1', '2' ], 'Is not one string of 1' )
+		          ->isOneStringOfOrNull( '4', [ '1', '2' ], 'Is not one string of 2' )
+		          ->ifHasKey( [ 'unit' => 'test' ], 'test', 1 )
+		          ->counts( [ 1, 2 ], 3, 'Count is wrong' )
+		          ->isArray( 'no-array', 'Not an array 1' )
+		          ->ifHasLengthOrNull( null, 3, 2 )
+		          ->isEqual( 1, 2, 'Is not equal 1' )
+		          ->isSame( 1, 2, 'Is not same 1' )
+		          ->isDate( '1970-0101', 'Y-m-d', 'Invalid date 1' )
+		          ->ifHasLengthOrNull( null, 5, 2 )
+		          ->checkIf( true, 2 )
+		          ->isUrl( 'no-url', 'Not an URL 1' )
+		          ->isNonEmptyString( 'unit-test', 'Empty string 3' )
+		          ->isNonEmptyString( '', 'Empty string 4' )
+		          ->hasMaxLength( 'four', 3, 'Too long 1' );
 
 		$this->assertTrue( $validator->failed() );
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
