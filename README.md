@@ -189,6 +189,54 @@ Array
 )
 ```
 
+## Conditional skip of checks
+
+You often want to check a value only if a previous condition is true. 
+Therefore the generic `checkIf` method was added, alongside with if-methods for each check method.
+ 
+**Example:**
+
+```php
+<php
+
+namespace My\NS;
+
+use hollodotme\FluidValidator\CheckMode;
+use hollodotme\FluidValidator\FluidValidator;
+
+$stringValue    = 'test';
+$arrayValue     = [ 'test', 'test2' ];
+$invalidEmail   = 'email@example@example.com';
+$birthdate 		= 'not-a-date';
+
+$validator = new FluidValidator( CheckMode::CONTINUOUS );
+
+$validator->isNonEmptyString( $stringValue, 'This is not a string' )
+          ->isArray( $arrayValue, 'Not an array' )
+          ->isOneStringOf( $stringValue, $arrayValue, 'Is not part of the array' )
+          # execute next 2 check methods, if $birthdate is a non-empty string
+          # skip next 2 check methods otherwise
+          ->ifIsNonEmptyString( $birthdate, 2 ) 
+          ->isEqual( $birthdate, 'not-a-date', 'Is not equal' )
+          ->isDate( $birthdate, 'Y-m-d', 'Birthdate is invalid' )
+          ->isEmail( $invalidEmail, 'This email address is invalid' );
+
+if ( $validator->failed() )
+{
+	print_r( $validator->getMessages() );
+}
+```
+
+**Prints:**
+
+```
+Array
+(
+    [0] => Birthdate is invalid
+    [1] => This email address is invalid
+)
+```
+
 ## Advanced usage with data provider
 
 If you have an object covering a data structure like an array or something like that, e.g. a request object, 
