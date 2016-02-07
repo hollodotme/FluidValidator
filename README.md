@@ -12,7 +12,7 @@ Validating values with a fluid interfaced class
 ## Installation
 
 ```
-composer require "hollodotme/fluid-validator" "~1.0.0"
+composer require "hollodotme/fluid-validator" "~1.1.0"
 ```
 
 ## Available validation methods
