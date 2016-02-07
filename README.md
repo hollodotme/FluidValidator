@@ -71,55 +71,55 @@ public function isFalseOrNull( $value, $message ) : FluidValidator;
 ## Conditional methods
 
 ```php
-public function checkIf( $expression, $continue = 1 ) : FluidValidator;
-public function ifIsString( $value, $continue = 1 ) : FluidValidator;
-public function ifIsStringOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsNonEmptyString( $value, $continue = 1 ) : FluidValidator;
-public function ifIsNonEmptyStringOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsNotEmpty( $value, $continue = 1 ) : FluidValidator;
-public function ifIsNotEmptyOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsArray( $value, $continue = 1 ) : FluidValidator;
-public function ifIsArrayOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsInt( $value, $continue = 1 ) : FluidValidator;
-public function ifIsIntOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsIntInRange( $value, array $range, $continue = 1 ) : FluidValidator;
-public function ifIsIntInRangeOrNull( $value, array $range, $continue = 1 ) : FluidValidator;
-public function ifIsOneStringOf( $value, array $list, $continue = 1 ) : FluidValidator;
-public function ifIsOneStringOfOrNull( $value, array $list, $continue = 1 ) : FluidValidator;
-public function ifIsSubsetOf( $values, array $list, $continue = 1 ) : FluidValidator;
-public function ifIsSubsetOfOrNull( $values, array $list, $continue = 1 ) : FluidValidator;
-public function ifIsUuid( $value, $continue = 1 ) : FluidValidator;
-public function ifIsUuidOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsEqual( $value1, $value2, $continue = 1 ) : FluidValidator;
-public function ifIsNotEqual( $value1, $value2, $continue = 1 ) : FluidValidator;
-public function ifIsSame( $value1, $value2, $continue = 1 ) : FluidValidator;
-public function ifIsNotSame( $value1, $value2, $continue = 1 ) : FluidValidator;
-public function ifIsNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsNotNull( $value, $continue = 1 ) : FluidValidator;
-public function ifMatchesRegex( $value, $regex, $continue = 1 ) : FluidValidator;
-public function ifMatchesRegexOrNull( $value, $regex, $continue = 1 ) : FluidValidator;
-public function ifHasLength( $value, $length, $continue = 1 ) : FluidValidator;
-public function ifHasLengthOrNull( $value, $length, $continue = 1 ) : FluidValidator;
-public function ifHasMinLength( $value, $minLength, $continue = 1 ) : FluidValidator;
-public function ifHasMinLengthOrNull( $value, $minLength, $continue = 1 ) : FluidValidator;
-public function ifHasMaxLength( $value, $maxLength, $continue = 1 ) : FluidValidator;
-public function ifHasMaxLengthOrNull( $value, $maxLength, $continue = 1 ) : FluidValidator;
-public function ifCounts( $values, $count, $continue = 1 ) : FluidValidator;
-public function ifCountsOrNull( $values, $count, $continue = 1 ) : FluidValidator;
-public function ifIsEmail( $value, $continue = 1 ) : FluidValidator;
-public function ifIsEmailOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsUrl( $value, $continue = 1 ) : FluidValidator;
-public function ifIsUrlNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsJson( $value, $continue = 1 ) : FluidValidator;
-public function ifIsJsonOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifHasKey( $values, $key, $continue = 1 ) : FluidValidator;
-public function ifHasKeyOrNull( $values, $key, $continue = 1 ) : FluidValidator;
-public function ifIsDate( $dateString, $format = 'Y-m-d', $continue = 1 ) : FluidValidator;
-public function ifIsDateOrNull( $dateString, $format = 'Y-m-d', $continue = 1 ) : FluidValidator;
-public function ifIsTrue( $value, $continue = 1 ) : FluidValidator;
-public function ifIsTrueOrNull( $value, $continue = 1 ) : FluidValidator;
-public function ifIsFalse( $value, $continue = 1 ) : FluidValidator;
-public function ifIsFalseOrNull( $value, $continue = 1 ) : FluidValidator;
+public function checkIf( $expression, $continue ) : FluidValidator;
+public function ifIsString( $value, $continue ) : FluidValidator;
+public function ifIsStringOrNull( $value, $continue ) : FluidValidator;
+public function ifIsNonEmptyString( $value, $continue ) : FluidValidator;
+public function ifIsNonEmptyStringOrNull( $value, $continue ) : FluidValidator;
+public function ifIsNotEmpty( $value, $continue ) : FluidValidator;
+public function ifIsNotEmptyOrNull( $value, $continue ) : FluidValidator;
+public function ifIsArray( $value, $continue ) : FluidValidator;
+public function ifIsArrayOrNull( $value, $continue ) : FluidValidator;
+public function ifIsInt( $value, $continue ) : FluidValidator;
+public function ifIsIntOrNull( $value, $continue ) : FluidValidator;
+public function ifIsIntInRange( $value, array $range, $continue ) : FluidValidator;
+public function ifIsIntInRangeOrNull( $value, array $range, $continue ) : FluidValidator;
+public function ifIsOneStringOf( $value, array $list, $continue ) : FluidValidator;
+public function ifIsOneStringOfOrNull( $value, array $list, $continue ) : FluidValidator;
+public function ifIsSubsetOf( $values, array $list, $continue ) : FluidValidator;
+public function ifIsSubsetOfOrNull( $values, array $list, $continue ) : FluidValidator;
+public function ifIsUuid( $value, $continue ) : FluidValidator;
+public function ifIsUuidOrNull( $value, $continue ) : FluidValidator;
+public function ifIsEqual( $value1, $value2, $continue ) : FluidValidator;
+public function ifIsNotEqual( $value1, $value2, $continue ) : FluidValidator;
+public function ifIsSame( $value1, $value2, $continue ) : FluidValidator;
+public function ifIsNotSame( $value1, $value2, $continue ) : FluidValidator;
+public function ifIsNull( $value, $continue ) : FluidValidator;
+public function ifIsNotNull( $value, $continue ) : FluidValidator;
+public function ifMatchesRegex( $value, $regex, $continue ) : FluidValidator;
+public function ifMatchesRegexOrNull( $value, $regex, $continue ) : FluidValidator;
+public function ifHasLength( $value, $length, $continue ) : FluidValidator;
+public function ifHasLengthOrNull( $value, $length, $continue ) : FluidValidator;
+public function ifHasMinLength( $value, $minLength, $continue ) : FluidValidator;
+public function ifHasMinLengthOrNull( $value, $minLength, $continue ) : FluidValidator;
+public function ifHasMaxLength( $value, $maxLength, $continue ) : FluidValidator;
+public function ifHasMaxLengthOrNull( $value, $maxLength, $continue ) : FluidValidator;
+public function ifCounts( $values, $count, $continue ) : FluidValidator;
+public function ifCountsOrNull( $values, $count, $continue ) : FluidValidator;
+public function ifIsEmail( $value, $continue ) : FluidValidator;
+public function ifIsEmailOrNull( $value, $continue ) : FluidValidator;
+public function ifIsUrl( $value, $continue ) : FluidValidator;
+public function ifIsUrlNull( $value, $continue ) : FluidValidator;
+public function ifIsJson( $value, $continue ) : FluidValidator;
+public function ifIsJsonOrNull( $value, $continue ) : FluidValidator;
+public function ifHasKey( $values, $key, $continue ) : FluidValidator;
+public function ifHasKeyOrNull( $values, $key, $continue ) : FluidValidator;
+public function ifIsDate( $dateString, $format = 'Y-m-d', $continue ) : FluidValidator;
+public function ifIsDateOrNull( $dateString, $format = 'Y-m-d', $continue ) : FluidValidator;
+public function ifIsTrue( $value, $continue ) : FluidValidator;
+public function ifIsTrueOrNull( $value, $continue ) : FluidValidator;
+public function ifIsFalse( $value, $continue ) : FluidValidator;
+public function ifIsFalseOrNull( $value, $continue ) : FluidValidator;
 ```
 
 ## Non-validation methods
@@ -197,7 +197,7 @@ Therefore the generic `checkIf` method was added, alongside with if-methods for 
 **Example:**
 
 ```php
-<php
+<?php
 
 namespace My\NS;
 
