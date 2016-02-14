@@ -423,7 +423,7 @@ Array
 
 ### Custom message collector implementations
 
-For custom a implementation of a message collector, simply create a class that implements 
+For a custom implementation of a message collector, simply create a class that implements 
 the `hollodotme\FluidValidator\Interfaces\CollectsMessages` interface.
 
 ```php
