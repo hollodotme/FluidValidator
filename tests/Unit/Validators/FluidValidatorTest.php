@@ -9,6 +9,7 @@ use hollodotme\FluidValidator\CheckMode;
 use hollodotme\FluidValidator\Exceptions\CheckMethodNotCallable;
 use hollodotme\FluidValidator\FluidValidator;
 use hollodotme\FluidValidator\Interfaces\ProvidesValuesToValidate;
+use hollodotme\FluidValidator\MessageCollectors\GroupedListMessageCollector;
 use hollodotme\FluidValidator\Tests\Unit\Fixtures\ValueObjects;
 
 class FluidValidatorTest extends \PHPUnit_Framework_TestCase
@@ -1418,6 +1419,32 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		          ->hasMaxLength( 'four', 3, 'Too long 1' );
 
 		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	/**
+	 * @expectedException \hollodotme\FluidValidator\Exceptions\InvalidMessageType
+	 */
+	public function testInvalidMessageThrowsException()
+	{
+		$validator = new FluidValidator();
+		$validator->isNonEmptyString( '', [ 'invalid' => 'message' ] );
+	}
+
+	public function testCanUseGroupedListMessageCollector()
+	{
+		$messageCollector = new GroupedListMessageCollector();
+		$validator        = new FluidValidator( CheckMode::CONTINUOUS, null, $messageCollector );
+		$expectedMessages = [
+			'unit' => [ 'test', 'unit' ],
+			'test' => [ 'unit', 'test' ],
+		];
+
+		$validator->isNonEmptyString( '', [ 'unit' => 'test' ] )
+		          ->isNonEmptyString( '', [ 'test' => 'unit' ] )
+		          ->isNonEmptyString( '', [ 'test' => 'test' ] )
+		          ->isNonEmptyString( '', [ 'unit' => 'unit' ] );
+
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 }

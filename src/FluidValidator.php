@@ -6,7 +6,10 @@
 namespace hollodotme\FluidValidator;
 
 use hollodotme\FluidValidator\Exceptions\CheckMethodNotCallable;
+use hollodotme\FluidValidator\Exceptions\InvalidMessageType;
+use hollodotme\FluidValidator\Interfaces\CollectsMessages;
 use hollodotme\FluidValidator\Interfaces\ProvidesValuesToValidate;
+use hollodotme\FluidValidator\MessageCollectors\ScalarListMessageCollector;
 use hollodotme\FluidValidator\Validators\StringValidator;
 
 /**
@@ -123,20 +126,44 @@ class FluidValidator
 	private $skipCounter;
 
 	/** @var bool */
-	protected $passed;
+	private $passed;
 
-	/** @var array */
-	protected $messages;
+	/** @var CollectsMessages */
+	private $messageCollector;
 
 	/**
 	 * @param int                           $mode
 	 * @param ProvidesValuesToValidate|null $dataProvider
+	 * @param CollectsMessages              $messageCollector
 	 */
-	public function __construct( $mode = CheckMode::CONTINUOUS, ProvidesValuesToValidate $dataProvider = null )
+	public function __construct(
+		$mode = CheckMode::CONTINUOUS,
+		ProvidesValuesToValidate $dataProvider = null,
+		CollectsMessages $messageCollector = null
+	)
 	{
-		$this->mode         = $mode;
-		$this->dataProvider = $dataProvider;
+		$this->mode             = $mode;
+		$this->dataProvider     = $dataProvider;
+		$this->messageCollector = $this->getMessageCollector( $messageCollector );
+
 		$this->reset();
+	}
+
+	/**
+	 * @param CollectsMessages|null $messageCollector
+	 *
+	 * @return CollectsMessages
+	 */
+	private function getMessageCollector( $messageCollector )
+	{
+		if ( $messageCollector instanceof CollectsMessages )
+		{
+			return $messageCollector;
+		}
+		else
+		{
+			return new ScalarListMessageCollector();
+		}
 	}
 
 	/**
@@ -146,7 +173,7 @@ class FluidValidator
 	{
 		$this->skipCounter = 0;
 		$this->passed      = true;
-		$this->messages    = [ ];
+		$this->messageCollector->clearMessages();
 
 		return $this;
 	}
@@ -195,7 +222,7 @@ class FluidValidator
 	 */
 	public function getMessages()
 	{
-		return $this->messages;
+		return $this->messageCollector->getMessages();
 	}
 
 	/**
@@ -288,13 +315,14 @@ class FluidValidator
 			else
 			{
 				$message = array_pop( $arguments );
+				$this->guardMessageIsValid( $message );
 
 				$checkResult = call_user_func_array( [ $this, $checkMethod ], $arguments );
 
 				if ( !$checkResult )
 				{
-					$this->passed     = false;
-					$this->messages[] = $message;
+					$this->passed = false;
+					$this->messageCollector->addMessage( $message );
 				}
 			}
 
@@ -314,6 +342,24 @@ class FluidValidator
 		if ( $checkMethod == 'check' || !method_exists( $this, $checkMethod ) )
 		{
 			throw ( new CheckMethodNotCallable )->withMethodName( $checkMethod );
+		}
+	}
+
+	/**
+	 * @param mixed $message
+	 *
+	 * @throws InvalidMessageType
+	 */
+	private function guardMessageIsValid( $message )
+	{
+		if ( !$this->messageCollector->isMessageValid( $message ) )
+		{
+			$message = sprintf(
+				'Invalid message type, check restriction of %s::isMessageValid.',
+				get_class( $this->messageCollector )
+			);
+
+			throw new InvalidMessageType( $message );
 		}
 	}
 

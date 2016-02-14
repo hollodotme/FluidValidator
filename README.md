@@ -7,12 +7,12 @@
 
 # FluidValidator
 
-Validating values with a fluid interfaced class
+Validating data with a fluent interfaced class
 
 ## Installation
 
 ```
-composer require "hollodotme/fluid-validator" "~1.1.0"
+composer require "hollodotme/fluid-validator" "~1.2.0"
 ```
 
 ## Available validation methods
@@ -69,6 +69,8 @@ public function isFalseOrNull( $value, $message ) : FluidValidator;
 ```
 
 ## Conditional methods
+
+Alvailable since version `1.1.0`.
 
 ```php
 public function checkIf( $expression, $continue ) : FluidValidator;
@@ -151,6 +153,11 @@ CheckMode::CONTINUOUS
 CheckMode::STOP_ON_FIRST_FAIL
 ```
 
+## Available message collectors
+
+* `ScalarListMessageCollector` for collecting scalar message values (default, if none is provided)
+* `GroupedListMessageCollector` for collecting scalar key / scalar value messages grouped by key
+
 ## Basic usage
 
 ```php
@@ -190,6 +197,8 @@ Array
 ```
 
 ## Conditional skip of checks
+
+Available since version `1.1.0`.
 
 You often want to check a value only if a previous condition is true. 
 Therefore the generic `checkIf` method was added, alongside with if-methods for each check method.
@@ -237,7 +246,7 @@ Array
 )
 ```
 
-## Advanced usage with data provider
+## Usage with data provider
 
 If you have an object covering a data structure like an array or something like that, e.g. a request object, 
 you can tell the `FluidValidator` to use this object to retrieve the values to validate from it.
@@ -307,3 +316,169 @@ if ( $validator->failed() )
 }
 ```
 
+## Usage with message collectors
+
+Available since version `1.2.0`.
+
+### ScalarListMessageCollector (default)
+
+```php
+<?php
+
+namespace My\NS;
+
+use hollodotme\FluidValidator\CheckMode;
+use hollodotme\FluidValidator\FluidValidator;
+use hollodotme\FluidValidator\MessageCollectors\ScalarListMessageCollector;
+
+$stringValue       = 'test';
+$arrayValue        = [ 'test', 'test2' ];
+$invalidEmail      = 'email@example@example.com';
+$optionalBirthdate = null;
+
+$messageCollector = new ScalarListMessageCollector();
+$validator        = new FluidValidator( CheckMode::CONTINUOUS, null, $messageCollector );
+
+$validator->isNonEmptyString( $stringValue, 'This is not a string' )
+          ->isArray( $arrayValue, 'Not an array' )
+          ->isOneStringOf( $stringValue, $arrayValue, 'Is not part of the array' )
+          ->isEmail( $invalidEmail, 'This email address is invalid' )
+          ->isDateOrNull( $optionalBirthdate, 'Y-m-d', 'Birthdate is invalid' );
+
+if ( $validator->failed() )
+{
+	print_r( $validator->getMessages() );
+}
+```
+
+Prints:
+
+```
+Array
+(
+    [0] => This email address is invalid
+)
+```
+
+**Note:** Behaviour is the same as in the [basic usage](#basic-usage) example above.
+
+### GroupedListMessageCollector
+
+This collector expects messages to be an assoc. array with scalar keys and values.
+
+```php
+<?php
+
+namespace My\NS;
+
+use hollodotme\FluidValidator\CheckMode;
+use hollodotme\FluidValidator\FluidValidator;
+use hollodotme\FluidValidator\MessageCollectors\GroupedListMessageCollector;
+
+$stringValue       = 'test';
+$arrayValue        = [ 'test', 'test2' ];
+$invalidEmail      = 'email@example@example.com';
+$optionalBirthdate = null;
+
+$messageCollector = new GroupedListMessageCollector();
+$validator        = new FluidValidator( CheckMode::CONTINUOUS, null, $messageCollector );
+
+$validator->isNonEmptyString( '', [ 'string' => 'String is empty' ] )
+          ->isArray( '', [ 'list' => 'Not an array' ] )
+          ->isOneStringOf( 'test3', $arrayValue, [ 'list' => 'Is not part of the array' ] )
+          ->isEmail( $invalidEmail, [ 'email' => 'This email address is invalid' ] )
+          ->isDate( $optionalBirthdate, 'Y-m-d', [ 'birthdate' => 'Birthdate is invalid' ] );
+
+if ( $validator->failed() )
+{
+	print_r( $validator->getMessages() );
+}
+```
+
+Prints:
+
+```
+Array
+(
+    [string] => Array (
+    	[0] => This email address is invalid
+    ),
+    [list] => Array (
+    	[0] => Not an array
+    	[1] => Is not part of the array
+    ),
+    [email] => Array (
+    	[0] => This email address is invalid
+    ),
+    [birthdate] => Array (
+    	[0] => Birthdate is invalid
+    )
+)
+```
+
+**Note:**
+
+* The "list" key is given twice, so 2 messages were grouped under this key. 
+* The value for a group key is always an array with numeric keys
+
+### Custom message collector implementations
+
+For custom a implementation of a message collector, simply create a class that implements 
+the `hollodotme\FluidValidator\Interfaces\CollectsMessages` interface.
+
+```php
+<?php
+
+namespace My\NS;
+
+use hollodotme\FluidValidator\Interfaces\CollectsMessages;
+
+class MyMessageCollector implements CollectsMessages
+{
+	/** @var array */
+	private $messages = [];
+
+	/**
+	 * @param mixed $message
+	 *
+	 * @return bool
+	 */
+	public function isMessageValid( $message )
+	{
+		// Check for a valid type or format of your expected messages
+		// Example:
+		
+		return is_string( $message );
+	}
+
+	/**
+	 * @param mixed $message
+	 */
+	public function addMessage( $message )
+	{
+		// Add a message to your collection
+		// Example:
+		
+		$this->messages[] = $message;
+	}
+
+	public function clearMessages()
+	{
+		// Clear the message list
+		// Example:
+		
+		$this->messages = [];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getMessages()
+	{
+		// Provide the collected messages
+		// Example:
+		
+		return $this->messages;
+	}
+}
+```
