@@ -12,7 +12,7 @@ Validating data with a fluent interfaced class
 ## Installation
 
 ```
-composer require "hollodotme/fluid-validator" "~1.2.0"
+composer require "hollodotme/fluid-validator" "~1.3.0"
 ```
 
 ## Available validation methods
@@ -70,7 +70,7 @@ public function isFalseOrNull( $value, $message ) : FluidValidator;
 
 ## Conditional methods
 
-Alvailable since version `1.1.0`.
+Alvailable since version `1.1.0`:
 
 ```php
 public function checkIf( $expression, $continue ) : FluidValidator;
@@ -122,6 +122,12 @@ public function ifIsTrue( $value, $continue ) : FluidValidator;
 public function ifIsTrueOrNull( $value, $continue ) : FluidValidator;
 public function ifIsFalse( $value, $continue ) : FluidValidator;
 public function ifIsFalseOrNull( $value, $continue ) : FluidValidator;
+```
+
+Available since version `1.3.0`:
+
+```php
+public function ifPassed( $continue ) : FluidValidator;
 ```
 
 ## Non-validation methods
@@ -228,7 +234,12 @@ $validator->isNonEmptyString( $stringValue, 'This is not a string' )
           ->ifIsNonEmptyString( $birthdate, 2 ) 
           ->isEqual( $birthdate, 'not-a-date', 'Is not equal' )
           ->isDate( $birthdate, 'Y-m-d', 'Birthdate is invalid' )
-          ->isEmail( $invalidEmail, 'This email address is invalid' );
+          ->isEmail( $invalidEmail, 'This email address is invalid' )
+          # execute next 1 check method, if all previous checks passed so far
+          # skip next 1 check method otherwise
+          ->ifPassed( 1 )
+          ->isNonEmptyString( '', 'String is empty' )
+          ->isEqual( 'testing', $stringValue, 'Strings are not equal' );
 
 if ( $validator->failed() )
 {
@@ -243,6 +254,7 @@ Array
 (
     [0] => Birthdate is invalid
     [1] => This email address is invalid
+    [2] => Strings are not equal
 )
 ```
 

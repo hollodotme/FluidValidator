@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Changes in Version 1.3.0
+
+* Introduced `ifPassed( $continue )` method for a conditional continue of x further checks, only if all previous checks passed so far.
+
+See [README](./README.md#conditional-skip-of-checks) for an example.
+
 ## Changes in Version 1.2.0
 
 * Added support for custom message collecting by introducing the `CollectsMessage` interface 

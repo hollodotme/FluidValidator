@@ -1422,6 +1422,42 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals( $expectedMessages, $validator->getMessages() );
 	}
 
+	public function testCanContinueIfPassedSoFar()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 2',
+			'Empty string 4',
+		];
+
+		$validator->isNonEmptyString( 'unit-test', 'Empty string 1' )
+		          ->ifPassed( 2 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->isNonEmptyString( 'unit-test', 'Empty string 3' )
+		          ->isNonEmptyString( '', 'Empty string 4' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
+	public function testCanSkipIfNotPassedSoFar()
+	{
+		$validator        = new FluidValidator();
+		$expectedMessages = [
+			'Empty string 1',
+			'Empty string 4',
+		];
+
+		$validator->isNonEmptyString( '', 'Empty string 1' )
+		          ->ifPassed( 2 )
+		          ->isNonEmptyString( '', 'Empty string 2' )
+		          ->isNonEmptyString( 'unit-test', 'Empty string 3' )
+		          ->isNonEmptyString( '', 'Empty string 4' );
+
+		$this->assertTrue( $validator->failed() );
+		$this->assertEquals( $expectedMessages, $validator->getMessages() );
+	}
+
 	/**
 	 * @expectedException \hollodotme\FluidValidator\Exceptions\InvalidMessageType
 	 */

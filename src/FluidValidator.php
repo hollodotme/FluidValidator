@@ -210,6 +210,16 @@ class FluidValidator
 	}
 
 	/**
+	 * @param int $continue
+	 *
+	 * @return FluidValidator
+	 */
+	public function ifPassed( $continue )
+	{
+		return $this->checkIf( $this->passed, $continue );
+	}
+
+	/**
 	 * @return bool
 	 */
 	public function failed()
