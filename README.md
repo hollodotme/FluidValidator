@@ -494,3 +494,114 @@ class MyMessageCollector implements CollectsMessages
 	}
 }
 ```
+
+### Extending FluidValidator with own checks
+
+Internally all validation and conditional methods are mapped to protected check methods returning a boolean.
+`TRUE` if the check has passed, `FALSE` otherwise.
+
+So extending FluidValidator is very simple.
+
+#### 1. Extend the class and add a check method
+
+Let's add a method that checks for a valid postal address.
+
+```php
+<?php
+
+namespace My\NS;
+
+use hollodotme\FluidValidator\FluidValidator;
+
+class MyFluidValidator extends FluidValidator
+{
+	/**
+	 * @param string $street
+	 * @param string $streetNumber
+	 * @param string $zipCode
+	 * @param string $city
+	 *
+	 * @return bool
+	 */
+	protected function checkIsPostalAddress( $street, $streetNumber, $zipCode, $city )
+	{
+		$validPostalAddress = true;
+		
+		# Simple formal checks first
+		# You can use existing check methods here
+		$validPostalAddress &= $this->checkIsNonEmptyString( $street );
+		$validPostalAddress &= $this->checkMatchesRegex( $streetNumber, "#^[0-9a-z\- ]$#i" );
+		$validPostalAddress &= $this->checkMatchesRegex( $zipCode, "#^[0-9]{5}$#" );
+		$validPostalAddress &= $this->checkIsNonEmptyString( $city );
+		
+		if ( (bool)$validPostalAddress )
+		{
+			# Semantic check of postal address
+		
+			# Fetch real values, if a data provider is used...
+			$streetValue 		= $this->getValue( $street );
+			$streetNumberValue 	= $this->getValue( $streetNumber );
+			$zipCodeValue 		= $this->getValue( $zipCode );
+			$cityValue 			= $this->getValue( $city );
+		
+			# Assuming you have a postal address validator doing the semantic check
+		
+			$validator = new PostalAddressValidator( $street, $streetNumber, $zipCode, $city );
+		
+			$validPostalAddress = $validator->isValid();
+		}
+		
+		return (bool)$validPostalAddress;
+	}
+}
+```
+
+#### 2. Use it for validation / conditions
+
+Now you're able to use this as a validation method with an additional message parameter 
+and as a conditional method with an additional continue parameter:
+
+```php
+<?php
+
+$myFluidValidator = new MyFluidValidator();
+
+# As validation method
+$myFluidValidator->isPostalAddress(
+	'MyStreet', '123 a', '01234', 'MyCity',
+	'Address is not valid'
+);
+
+# As conditional method
+$myFluidValidator->ifIsPostalAddress(
+	'MyStreet', '123 a', '01234', 'MyCity',
+	3
+);
+/** Skip next 3 methods, if it is not a valid postal address **/
+```
+
+#### 3. Add method signatures
+
+To have better auto completion in your IDE, add the relevant method signatures
+to the head phpdoc of your class.
+
+```php
+<?php
+
+namespace My\NS;
+
+use hollodotme\FluidValidator\FluidValidator;
+
+/**
+ * Class MyFluidValidator
+ * @package My\NS;
+ * METHODSTART
+ * @method MyFluidValidator isPostalAddress($street, $streetNumber, $zipCode, $city, $message)
+ * @method MyFluidValidator ifIsPostalAddress($street, $streetNumber, $zipCode, $city, $continue)
+ * METHODEND
+ */
+class MyFluidValidator extends FluidValidator
+{
+    /* ... */
+}
+```
