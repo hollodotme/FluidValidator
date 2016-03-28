@@ -3,7 +3,7 @@
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
 cd "$(dirname "$0")"
 
-for pharFile in `ls -1 *.phar`; do rm -rf "$pharFile"; done
+rm -rf ./*.phar
 
 # Composer
 rm -f composer.phar

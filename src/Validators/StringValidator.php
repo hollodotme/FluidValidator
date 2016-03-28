@@ -190,7 +190,7 @@ class StringValidator
 		{
 			$val = strval( $value );
 
-			if ( !is_null( json_decode( $val ) ) && json_last_error() === JSON_ERROR_NONE )
+			if ( (json_decode( $val ) !== null) && json_last_error() === JSON_ERROR_NONE )
 			{
 				return true;
 			}

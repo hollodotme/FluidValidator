@@ -291,7 +291,7 @@ class FluidValidator
 		$value    = $this->getValue( $var );
 		$optional = (substr( $methodName, -6 ) == 'OrNull');
 
-		return ($optional && is_null( $value ));
+		return ($optional && ($value === null));
 	}
 
 	/**
@@ -561,7 +561,7 @@ class FluidValidator
 	 */
 	protected function checkIsNull( $value )
 	{
-		return is_null( $this->getValue( $value ) );
+		return ($this->getValue( $value ) === null);
 	}
 
 	/**
@@ -571,7 +571,7 @@ class FluidValidator
 	 */
 	protected function checkIsNotNull( $value )
 	{
-		return !is_null( $this->getValue( $value ) );
+		return ($this->getValue( $value ) !== null);
 	}
 
 	/**

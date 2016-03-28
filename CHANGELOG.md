@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Changes in Version 1.3.1
+
+* Fixed issue #1
+
 ## Changes in Version 1.3.0
 
 * Introduced `ifPassed( $continue )` method for a conditional continue of x further checks, only if all previous checks passed so far.
