@@ -17,7 +17,7 @@ Validating data with a fluent interfaced class
 ## Installation
 
 ```
-composer require "hollodotme/fluid-validator" "~1.3.0"
+composer require "hollodotme/fluid-validator" "~1.4.0"
 ```
 
 ## Available validation methods
