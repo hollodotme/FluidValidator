@@ -9,6 +9,11 @@
 
 Validating data with a fluent interfaced class
 
+## Requirements
+
+* PHP >= 5.5
+* [intl extension](http://php.net/manual/en/book.intl.php)
+
 ## Installation
 
 ```

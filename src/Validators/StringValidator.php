@@ -27,29 +27,7 @@ class StringValidator
 	 */
 	public function isString( $value )
 	{
-		if ( is_object( $value ) )
-		{
-			if ( !is_callable( [ $value, '__toString' ] ) )
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-		elseif ( !is_scalar( $value ) )
-		{
-			return false;
-		}
-		elseif ( is_bool( $value ) )
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return (is_string( $value ) === true);
 	}
 
 	/**
@@ -61,42 +39,7 @@ class StringValidator
 	{
 		if ( $this->isString( $value ) )
 		{
-			$val = trim( strval( $value ) );
-
-			if ( $val === '' )
-			{
-				return false;
-			}
-			else
-			{
-				return true;
-			}
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	/**
-	 * @param mixed $value
-	 *
-	 * @return bool
-	 */
-	public function isInt( $value )
-	{
-		if ( $this->isString( $value ) )
-		{
-			$val = strval( $value );
-
-			if ( is_numeric( $val ) && intval( $val ) == $val )
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return !empty($value);
 		}
 		else
 		{
@@ -113,13 +56,11 @@ class StringValidator
 	{
 		if ( $this->isNonEmptyString( $value ) )
 		{
-			$val = strval( $value );
-
-			if ( $val == self::UUID_NIL )
+			if ( $value == self::UUID_NIL )
 			{
 				return true;
 			}
-			elseif ( preg_match( "#" . self::UUID_VALID_PATTERN . "#", $val ) )
+			elseif ( preg_match( "#" . self::UUID_VALID_PATTERN . "#", $value ) )
 			{
 				return true;
 			}
@@ -143,9 +84,7 @@ class StringValidator
 	{
 		if ( $this->isNonEmptyString( $value ) )
 		{
-			$val = strval( $value );
-
-			if ( filter_var( $val, FILTER_VALIDATE_EMAIL ) )
+			if ( filter_var( $value, FILTER_VALIDATE_EMAIL ) )
 			{
 				return true;
 			}
@@ -169,9 +108,7 @@ class StringValidator
 	{
 		if ( $this->isNonEmptyString( $value ) )
 		{
-			$val = strval( $value );
-
-			return boolval( filter_var( $val, FILTER_VALIDATE_URL ) );
+			return boolval( filter_var( $value, FILTER_VALIDATE_URL ) );
 		}
 		else
 		{
@@ -188,9 +125,7 @@ class StringValidator
 	{
 		if ( $this->isNonEmptyString( $value ) )
 		{
-			$val = strval( $value );
-
-			if ( (json_decode( $val ) !== null) && json_last_error() === JSON_ERROR_NONE )
+			if ( (json_decode( $value ) !== null) && json_last_error() === JSON_ERROR_NONE )
 			{
 				return true;
 			}
@@ -198,6 +133,90 @@ class StringValidator
 			{
 				return false;
 			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * @param mixed  $value
+	 * @param string $regex
+	 *
+	 * @return bool
+	 */
+	public function matchesRegex( $value, $regex )
+	{
+		if ( $this->isString( $value ) )
+		{
+			return (bool)preg_match( $regex, $value );
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param int   $length
+	 
+	 * 
+*@return bool
+	 */
+	public function hasLength( $value, $length )
+	{
+		if ( $this->isString( $value ) )
+		{
+			return ($this->getLength( $value ) == $length);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * @param string $string
+	 *
+	 * @return int
+	 */
+	private function getLength( $string )
+	{
+		return grapheme_strlen( $string );
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param int   $minLength
+	 *
+	 * @return bool
+	 */
+	public function hasMinLength( $value, $minLength )
+	{
+		if ( $this->isString( $value ) )
+		{
+			return ($this->getLength( $value ) >= $minLength);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param int   $maxLength
+	 
+	 * 
+*@return bool
+	 */
+	public function hasMaxLength( $value, $maxLength )
+	{
+		if ( $this->isString( $value ) )
+		{
+			return ($this->getLength( $value ) <= $maxLength);
 		}
 		else
 		{

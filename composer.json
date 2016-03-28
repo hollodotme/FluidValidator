@@ -15,7 +15,8 @@
 		"source": "https://github.com/hollodotme/fluid-validator"
 	},
 	"require": {
-		"php": ">=5.5"
+		"php": ">=5.5",
+		"ext-intl": "*"
 	},
 	"require-dev": {
 		"satooshi/php-coveralls": "dev-master"

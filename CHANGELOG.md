@@ -1,8 +1,13 @@
 # CHANGELOG
 
-## Changes in Version 1.3.1
+## Changes in Version 1.4.0
 
 * Fixed issue #1
+* Fixed issue #2
+* Fixed issue #3
+
+* Replaced [mbstring functions](http://php.net/manual/en/ref.mbstring.php) with [grapheme functions](http://php.net/manual/en/ref.intl.grapheme.php)
+* Added test configuration for php7
 
 ## Changes in Version 1.3.0
 

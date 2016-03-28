@@ -130,21 +130,21 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 	{
 		return [
 			[ '', false, [ 'String is empty' ] ],
-			[ ' ', false, [ 'String is empty' ] ],
-			[ "\n", false, [ 'String is empty' ] ],
-			[ "\r", false, [ 'String is empty' ] ],
-			[ "\t", false, [ 'String is empty' ] ],
-			[ "\x0B", false, [ 'String is empty' ] ],
-			[ "\0", false, [ 'String is empty' ] ],
+			[ ' ', true, [ ] ],
+			[ "\n", true, [ ] ],
+			[ "\r", true, [ ] ],
+			[ "\t", true, [ ] ],
+			[ "\x0B", true, [ ] ],
+			[ "\0", true, [ ] ],
 			[ "Unit-Test", true, [ ] ],
 			[ "1", true, [ ] ],
-			[ "0", true, [ ] ],
+			[ "0", false, [ 'String is empty' ] ],
 			[ "null", true, [ ] ],
 			[ "1.23", true, [ ] ],
-			[ 12, true, [ ] ],
-			[ 12.3, true, [ ] ],
+			[ 12, false, [ 'String is empty' ] ],
+			[ 12.3, false, [ 'String is empty' ] ],
 			[ new ValueObjects\ObjectWithToStringMethod( '' ), false, [ 'String is empty' ] ],
-			[ new ValueObjects\ObjectWithToStringMethod( 'Unit-Test' ), true, [ ] ],
+			[ new ValueObjects\ObjectWithToStringMethod( 'Unit-Test' ), false, [ 'String is empty' ] ],
 			[ new ValueObjects\ObjectWithoutToStringMethod( 'Unit-Test' ), false, [ 'String is empty' ] ],
 			[ new \stdClass(), false, [ 'String is empty' ] ],
 			[ false, false, [ 'String is empty' ] ],
@@ -252,16 +252,16 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ 0, true, [ ] ],
 			[ 1, true, [ ] ],
 			[ -1, true, [ ] ],
-			[ '-1', true, [ ] ],
-			[ '0', true, [ ] ],
-			[ '1', true, [ ] ],
+			[ '-1', false, [ 'Not an int' ] ],
+			[ '0', false, [ 'Not an int' ] ],
+			[ '1', false, [ 'Not an int' ] ],
 			[ '13232345546548785456464121515454', false, [ 'Not an int' ] ],
 			[ 13232345546548785456464121515454, false, [ 'Not an int' ] ],
 			[ '12.3', false, [ 'Not an int' ] ],
 			[ 12.3, false, [ 'Not an int' ] ],
 			[ new \stdClass(), false, [ 'Not an int' ] ],
 			[ new ValueObjects\ObjectWithToStringMethod( '' ), false, [ 'Not an int' ] ],
-			[ new ValueObjects\ObjectWithToStringMethod( '12345' ), true, [ ] ],
+			[ new ValueObjects\ObjectWithToStringMethod( '12345' ), false, [ 'Not an int' ] ],
 			[ new ValueObjects\ObjectWithoutToStringMethod( '12345' ), false, [ 'Not an int' ] ],
 		];
 	}
@@ -294,9 +294,9 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ -5, range( -5, +5 ), true, [ ] ],
 			[ -6, range( -5, +5 ), false, [ 'Not in range' ] ],
 			[ 6, range( -5, +5 ), false, [ 'Not in range' ] ],
-			[ '0', range( -5, +5 ), true, [ ] ],
-			[ '5', range( -5, +5 ), true, [ ] ],
-			[ '-5', range( -5, +5 ), true, [ ] ],
+			[ '0', range( -5, +5 ), false, [ 'Not in range' ] ],
+			[ '5', range( -5, +5 ), false, [ 'Not in range' ] ],
+			[ '-5', range( -5, +5 ), false, [ 'Not in range' ] ],
 			[ '-6', range( -5, +5 ), false, [ 'Not in range' ] ],
 			[ '6', range( -5, +5 ), false, [ 'Not in range' ] ],
 			[ false, range( -5, +5 ), false, [ 'Not in range' ] ],
@@ -304,7 +304,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ null, range( -5, +5 ), false, [ 'Not in range' ] ],
 			[ new \stdClass(), range( -5, +5 ), false, [ 'Not in range' ] ],
 			[ new ValueObjects\ObjectWithoutToStringMethod( '5' ), range( -5, +5 ), false, [ 'Not in range' ] ],
-			[ new ValueObjects\ObjectWithToStringMethod( '3' ), range( -5, +5 ), true, [ ] ],
+			[ new ValueObjects\ObjectWithToStringMethod( '3' ), range( -5, +5 ), false, [ 'Not in range' ] ],
 		];
 	}
 
@@ -343,7 +343,7 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 				new ValueObjects\ObjectWithoutToStringMethod( 'Yes' ), [ 'Yes', '', 'No' ], false,
 				[ 'Not a string of' ],
 			],
-			[ new ValueObjects\ObjectWithToStringMethod( 'Yes' ), [ 'Yes', '', 'No' ], true, [ ] ],
+			[ new ValueObjects\ObjectWithToStringMethod( 'Yes' ), [ 'Yes', '', 'No' ], false, [ 'Not a string of' ] ],
 		];
 	}
 
@@ -414,7 +414,10 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ '01a2b3c4-D5F6-7a8b-9c0D-1E2f3a4B5c6D', true, [ ] ],
 			[ 'AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE', true, [ ] ],
 			[ '12345678-1234-5678-9101-121314151617', true, [ ] ],
-			[ new ValueObjects\ObjectWithToStringMethod( '12345678-1234-5678-9101-121314151617' ), true, [ ] ],
+			[
+				new ValueObjects\ObjectWithToStringMethod( '12345678-1234-5678-9101-121314151617' ), false,
+				[ 'Not a uuid' ],
+			],
 			[
 				new ValueObjects\ObjectWithoutToStringMethod( '12345678-1234-5678-9101-121314151617' ), false,
 				[ 'Not a uuid' ],
@@ -756,10 +759,10 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			# Has length
 			[ 'Unit', 4, true ],
 			[ 'Unit-Test', 9, true ],
-			[ 123, 3, true ],
-			[ 'åèö', 6, true ],
+			[ 'åèö', 3, true ],
 
 			# Has not length
+			[ 123, 3, false ],
 			[ 'Unit', 3, false ],
 			[ 123, 4, false ],
 			[ null, 1, false ],
@@ -792,10 +795,10 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ 'Unit', 3, true ],
 			[ 'Test', 2, true ],
 			[ 'Unit-Test', 9, true ],
-			[ 'mœrely', 7, true ],
-			[ 1234, 3, true ],
+			[ 'mœrely', 6, true ],
 
 			# Has not min length
+			[ 1234, 4, false ],
 			[ 'Unit', 5, false ],
 			[ 'Test', 6, false ],
 			[ 'Unit-Test', 11, false ],
@@ -831,14 +834,14 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ 'Unit', 5, true ],
 			[ 'Test', 4, true ],
 			[ 'Unit-Test', 10, true ],
-			[ 'åèö', 6, true ],
-			[ 123, 3, true ],
+			[ 'åèö', 3, true ],
 
 			# Has not max length
+			[ 123, 3, false ],
 			[ 'Unit', 3, false ],
 			[ 'Test', 2, false ],
 			[ 'Unit-Test', 8, false ],
-			[ 'åèö', 5, false ],
+			[ 'åèö', 2, false ],
 			[ 123.1, 4, false ],
 			[ null, 4, false ],
 			[ new \stdClass(), 8, false ],
@@ -914,9 +917,9 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ 'email@example.museum', true ],
 			[ 'email@example.co.jp', true ],
 			[ 'firstname-lastname@example.com', true ],
-			[ new ValueObjects\ObjectWithToStringMethod( 'me@example.com' ), true ],
 
 			# Invalid email addresses
+			[ new ValueObjects\ObjectWithToStringMethod( 'me@example.com' ), false ],
 			[ '#@%^%#$@#$@#.com', false ],
 			[ '@example.com', false ],
 			[ 'Joe Smith <email@example.com>', false ],
@@ -968,9 +971,9 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 			[ 'https://test.example.com', true ],
 			[ 'ftp://test.example.com', true ],
 			[ 'sftp://test.example.com', true ],
-			[ new ValueObjects\ObjectWithToStringMethod( 'sftp://test.example.com' ), true ],
 
 			# Invalid URLs
+			[ new ValueObjects\ObjectWithToStringMethod( 'sftp://test.example.com' ), false ],
 			[ '//example.com', false ],
 			[ 'example.com', false ],
 			[ 'test.example.com', false ],
@@ -1003,13 +1006,13 @@ class FluidValidatorTest extends \PHPUnit_Framework_TestCase
 		return [
 			# Valid json
 			[ '1234', true ],
-			[ 123.4, true ],
 			[ '[]', true ],
 			[ '{}', true ],
 			[ '[123, 456, "Test"]', true ],
 			[ '{"unit": "test"}', true ],
 
 			# Invalid json
+			[ 123.4, false ],
 			[ '', false ],
 			[ '(1234)', false ],
 			[ '("Unit-Test")', false ],

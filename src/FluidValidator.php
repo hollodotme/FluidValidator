@@ -131,6 +131,9 @@ class FluidValidator
 	/** @var CollectsMessages */
 	private $messageCollector;
 
+	/** @var StringValidator */
+	private $stringValidator;
+
 	/**
 	 * @param int                           $mode
 	 * @param ProvidesValuesToValidate|null $dataProvider
@@ -397,7 +400,20 @@ class FluidValidator
 	 */
 	protected function checkIsString( $value )
 	{
-		return ( new StringValidator() )->isString( $this->getValue( $value ) );
+		return $this->getStringValidator()->isString( $this->getValue( $value ) );
+	}
+
+	/**
+	 * @return StringValidator
+	 */
+	private function getStringValidator()
+	{
+		if ( $this->stringValidator === null )
+		{
+			$this->stringValidator = new StringValidator();
+		}
+
+		return $this->stringValidator;
 	}
 
 	/**
@@ -407,7 +423,7 @@ class FluidValidator
 	 */
 	protected function checkIsNonEmptyString( $value )
 	{
-		return ( new StringValidator() )->isNonEmptyString( $this->getValue( $value ) );
+		return $this->getStringValidator()->isNonEmptyString( $this->getValue( $value ) );
 	}
 
 	/**
@@ -437,7 +453,7 @@ class FluidValidator
 	 */
 	protected function checkIsInt( $value )
 	{
-		return ( new StringValidator() )->isInt( $this->getValue( $value ) );
+		return (is_int( $this->getValue( $value ) ) === true);
 	}
 
 	/**
@@ -450,9 +466,7 @@ class FluidValidator
 	{
 		if ( $this->checkIsInt( $value ) )
 		{
-			$val = intval( strval( $this->getValue( $value ) ) );
-
-			return in_array( $val, $range, true );
+			return in_array( $this->getValue( $value ), $range, true );
 		}
 		else
 		{
@@ -470,9 +484,7 @@ class FluidValidator
 	{
 		if ( $this->checkIsString( $value ) )
 		{
-			$val = strval( $this->getValue( $value ) );
-
-			return in_array( $val, $list, true );
+			return in_array( $this->getValue( $value ), $list, true );
 		}
 		else
 		{
@@ -507,7 +519,7 @@ class FluidValidator
 	 */
 	protected function checkIsUuid( $value )
 	{
-		return ( new StringValidator() )->isUuid( $this->getValue( $value ) );
+		return $this->getStringValidator()->isUuid( $this->getValue( $value ) );
 	}
 
 	/**
@@ -582,16 +594,7 @@ class FluidValidator
 	 */
 	protected function checkMatchesRegex( $value, $regex )
 	{
-		if ( $this->checkIsString( $value ) )
-		{
-			$val = strval( $this->getValue( $value ) );
-
-			return boolval( preg_match( $regex, $val ) );
-		}
-		else
-		{
-			return false;
-		}
+		return $this->getStringValidator()->matchesRegex( $this->getValue( $value ), $regex );
 	}
 
 	/**
@@ -602,16 +605,7 @@ class FluidValidator
 	 */
 	protected function checkHasLength( $value, $length )
 	{
-		if ( $this->checkIsString( $value ) )
-		{
-			$val = strval( $this->getValue( $value ) );
-
-			return (mb_strlen( $val, '8bit' ) == $length);
-		}
-		else
-		{
-			return false;
-		}
+		return $this->getStringValidator()->hasLength( $this->getValue( $value ), $length );
 	}
 
 	/**
@@ -622,16 +616,7 @@ class FluidValidator
 	 */
 	protected function checkHasMinLength( $value, $minLength )
 	{
-		if ( $this->checkIsString( $value ) )
-		{
-			$val = strval( $this->getValue( $value ) );
-
-			return (mb_strlen( $val, '8bit' ) >= $minLength);
-		}
-		else
-		{
-			return false;
-		}
+		return $this->getStringValidator()->hasMinLength( $this->getValue( $value ), $minLength );
 	}
 
 	/**
@@ -642,16 +627,7 @@ class FluidValidator
 	 */
 	protected function checkHasMaxLength( $value, $maxLength )
 	{
-		if ( $this->checkIsString( $value ) )
-		{
-			$val = strval( $this->getValue( $value ) );
-
-			return (mb_strlen( $val, '8bit' ) <= $maxLength);
-		}
-		else
-		{
-			return false;
-		}
+		return $this->getStringValidator()->hasMaxLength( $this->getValue( $value ), $maxLength );
 	}
 
 	/**
@@ -679,7 +655,7 @@ class FluidValidator
 	 */
 	protected function checkIsEmail( $value )
 	{
-		return ( new StringValidator() )->isEmail( $this->getValue( $value ) );
+		return $this->getStringValidator()->isEmail( $this->getValue( $value ) );
 	}
 
 	/**
@@ -689,7 +665,7 @@ class FluidValidator
 	 */
 	protected function checkIsUrl( $value )
 	{
-		return ( new StringValidator() )->isUrl( $this->getValue( $value ) );
+		return $this->getStringValidator()->isUrl( $this->getValue( $value ) );
 	}
 
 	/**
@@ -699,7 +675,7 @@ class FluidValidator
 	 */
 	protected function checkIsJson( $value )
 	{
-		return ( new StringValidator() )->isJson( $this->getValue( $value ) );
+		return $this->getStringValidator()->isJson( $this->getValue( $value ) );
 	}
 
 	/**
