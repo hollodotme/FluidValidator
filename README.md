@@ -9,6 +9,8 @@
 
 Validating data with a fluent interfaced class
 
+**[Read more about this approach on my blog post.](http://bit.ly/FluValEn)**
+
 ## Requirements
 
 * PHP >= 5.5
